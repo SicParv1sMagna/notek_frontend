@@ -1,3 +1,2 @@
-import { MainPage } from "./Main/Main";
-
-export default MainPage;
+export { MainPage } from "./Main/Main";
+export { Editor } from "./Editor/Editor";

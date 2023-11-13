@@ -6,13 +6,17 @@ import { ModalWindow } from "../../Shared/Modal/Modal";
 export const MainPage = () => {
     const [openAuthModal, setOpenAuthModal] = useState(false);
     const [type, setType] = useState("");
-    console.log(openAuthModal)
+
     return (
         <>
             <Navbars
                 setOpenAuthModal={setOpenAuthModal}
                 setType={setType}
             />
+            <ModalWindow
+                type={type}
+                show={openAuthModal}
+                setOpenModal={setOpenAuthModal} children={undefined} />
             <Container
                 style={{
                     display: "flex",
@@ -22,13 +26,6 @@ export const MainPage = () => {
                     minHeight: "100vh",
                 }}
             >
-                <ModalWindow
-                    type={type}
-                    show={openAuthModal}
-                    setOpenModal={setOpenAuthModal}
-                >
-                    asdfao;isdf
-                </ModalWindow>
                 <Login />
                 <About />
             </Container>

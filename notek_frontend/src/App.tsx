@@ -1,6 +1,9 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
-import MainPage from './Pages'
+import { MainPage, Editor } from './Pages'
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { EditorById } from './Pages/Editor/EditorById';
+import { useState } from 'react';
+
 
 function App() {
 
@@ -9,6 +12,8 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<MainPage />} />
+          <Route path="/editor" element={<Editor />} />
+          <Route path="/editor/:id" element={<EditorById />} />
         </Routes>
       </BrowserRouter>
     </>

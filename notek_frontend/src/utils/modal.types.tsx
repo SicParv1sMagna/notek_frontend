@@ -5,17 +5,17 @@ interface ModalProps {
     footer: {
         close: string,
         submit: string,
-    }   
+    }
 }
 
 export interface ModalContent {
+    children: ReactNode;
     type: string;
     show: boolean;
-    children: ReactNode;
     setOpenModal: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export const modal : Record<string, ModalProps> = {
+export const modal: Record<string, ModalProps> = {
     "auth": {
         "header": "Войти",
         "footer": {
