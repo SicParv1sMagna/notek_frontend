@@ -12,15 +12,21 @@ export const EditorById = () => {
 
     useEffect(() => {
         const fetchNote = async () => {
-            const response = await fetch(`/api/notes/markdown/get-markdown/${id}`);
-            const markdown = await response.json();
-            console.log(markdown);
-            if (markdown == undefined) {
-                setInput(NotesMock[Number(id)-1].Content);
-                setNote(NotesMock[Number(id)-1]);
-            } else {
-                setInput(markdown.Content);
-                setNote(markdown);
+            try {
+                const response = await fetch(`/api/api/notes/markdown/${id}`);
+                const markdown = await response.json();
+                console.log(markdown);
+                if (markdown == undefined) {
+                    setInput(NotesMock[Number(id) - 1].Content);
+                    setNote(NotesMock[Number(id) - 1]);
+                } else {
+                    setInput(markdown.Content);
+                    setNote(markdown);
+                }
+            }
+            catch {
+                setInput(NotesMock[Number(id) - 1].Content);
+                setNote(NotesMock[Number(id) - 1]);
             }
         }
 
@@ -30,9 +36,9 @@ export const EditorById = () => {
     return (
         <>
             <EditorNavbar
-                name = {note?.Name}
-                id = {note?.Markdown_ID}
-                date = {note?.start_date}
+                name={note?.Name}
+                id={note?.Markdown_ID}
+                date={note?.start_date}
             />
             <div
                 style={{

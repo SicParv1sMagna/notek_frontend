@@ -6,7 +6,7 @@ import { NavLink } from 'react-router-dom';
 import React, { useEffect, useState } from 'react';
 import Breadcrumbs from '../Breadcrumbs/Breadcrumbs';
 
-export const Navbars = ({ setOpenAuthModal, setType }: any) => {
+export const Navbars = () => {
     return (
         <Navbar collapseOnSelect expand="lg" className="bg-body-tertiary">
             <Container>
@@ -27,21 +27,14 @@ export const Navbars = ({ setOpenAuthModal, setType }: any) => {
                     </Nav>
                     <Nav>
                         <Nav.Link>
-                            <Button
-                                onClick={() => {
-                                    setOpenAuthModal(true)
-                                    setType("auth")
-                                }}
-                            >Войти</Button>
+                            <NavLink to="/authorization">
+                                <Button>Войти</Button>
+                            </NavLink>
                         </Nav.Link>
                         <Nav.Link>
-                            <Button
-
-                                onClick={() => {
-                                    setOpenAuthModal(true)
-                                    setType("register")
-                                }}
-                            >Зарегестрироваться</Button>
+                            <NavLink to="/registration">
+                                <Button>Зарегестрироваться</Button>
+                            </NavLink>
                         </Nav.Link>
 
                     </Nav>

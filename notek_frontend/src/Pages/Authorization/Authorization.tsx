@@ -1,9 +1,9 @@
-import { Container } from 'react-bootstrap';
-import Button from 'react-bootstrap/Button';
+import { Navbars } from "../../Widgets"
 import Form from 'react-bootstrap/Form';
+import Button from 'react-bootstrap/Button';
 import { useNavigate } from 'react-router-dom';
 
-export const Login = () => {
+export const Authorization = () => {
     const navigate = useNavigate();
 
     const handleButtonClick = () => {
@@ -15,6 +15,7 @@ export const Login = () => {
 
     return (
         <>
+        <Navbars />
             <Form
                 style={{
                     padding: "20px",
@@ -22,22 +23,22 @@ export const Login = () => {
                     flexDirection: "column",
                     width: "400px",
                     marginBottom: "20px",
-                    alignItems: "center",
-
+                    marginLeft: "auto",
+                    marginRight: "auto",
                 }}
             >
                 <Form.Group className="mb-3" controlId="formBasicEmail">
-                    <Form.Label>Email</Form.Label>
-                    <Form.Control type="email" placeholder="Enter email" />
+                    <Form.Label>Почта</Form.Label>
+                    <Form.Control type="email" placeholder="example@mail.ru" />
                 </Form.Group>
                 <Form.Group className="mb-3" controlId="formBasicPassword">
-                    <Form.Label>Password</Form.Label>
-                    <Form.Control type="password" placeholder="Password" />
+                    <Form.Label>Пароль</Form.Label>
+                    <Form.Control type="password" placeholder="Пароль" />
                 </Form.Group>
                 <Button variant="primary" onClick={handleButtonClick}>
                     Submit
                 </Button>
             </Form>
         </>
-    );
-};
+    )
+}
