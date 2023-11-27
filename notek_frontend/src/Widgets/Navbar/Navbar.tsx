@@ -10,29 +10,29 @@ export const Navbars = () => {
     return (
         <Navbar collapseOnSelect expand="lg" className="bg-body-tertiary">
             <Container>
-                <Navbar.Brand><NavLink to="/">Notek</NavLink></Navbar.Brand>
+                <Navbar.Brand><NavLink to="/notek_frontend">Notek</NavLink></Navbar.Brand>
                 <Navbar.Toggle aria-controls="responsive-navbar-nav" />
                 <Navbar.Collapse id="responsive-navbar-nav">
                     <Nav className="me-auto">
                         <Nav.Link>
-                            <NavLink to="/about">
+                            <NavLink to="/notek_frontend/about">
                                 About
                             </NavLink>
                         </Nav.Link>
                         <Nav.Link>
-                            <NavLink to="/github">
+                            <NavLink to="/notek_frontend/github">
                                 GitHub
                             </NavLink>
                         </Nav.Link>
                     </Nav>
                     <Nav>
                         <Nav.Link>
-                            <NavLink to="/authorization">
+                            <NavLink to="/notek_frontend/authorization">
                                 <Button>Войти</Button>
                             </NavLink>
                         </Nav.Link>
                         <Nav.Link>
-                            <NavLink to="/registration">
+                            <NavLink to="/notek_frontend/registration">
                                 <Button>Зарегестрироваться</Button>
                             </NavLink>
                         </Nav.Link>

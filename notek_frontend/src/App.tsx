@@ -11,11 +11,11 @@ function App() {
     <>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<MainPage />} />
-          <Route path="/editor" element={<Editor />} />
-          <Route path="/editor/:id" element={<EditorById />} />
-          <Route path="/authorization" element={<Authorization />} />
-          <Route path="/registration" element={<Registration />} />
+          <Route path="/notek_frontend" element={<MainPage />} />
+          <Route path="/notek_frontend/editor" element={<Editor />} />
+          <Route path="/notek_frontend/editor/:id" element={<EditorById />} />
+          <Route path="/notek_frontend/authorization" element={<Authorization />} />
+          <Route path="/notek_frontend/registration" element={<Registration />} />
         </Routes>
       </BrowserRouter>
     </>

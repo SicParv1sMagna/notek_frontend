@@ -7,7 +7,7 @@ export const Registration = () => {
     const navigate = useNavigate();
 
     const handleButtonClick = () => {
-        navigate("/editor")
+        navigate("/notek_frontend/editor")
     }
 
     return (

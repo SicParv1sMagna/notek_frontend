@@ -9,7 +9,7 @@ export const Login = () => {
         // Выполняйте здесь необходимые действия для входа, если необходимо
 
         // Перенаправление на "/editor" после успешного входа
-        navigate("/editor");
+        navigate("/notek_frontend/editor");
     };
 
     return (
