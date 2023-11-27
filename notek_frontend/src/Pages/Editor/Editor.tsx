@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react"
 import { Navbars, Sidebar } from "../../Widgets"
 import { NotesMock, NotesTypes } from "../../utils/notes.types"
-import { ModalWindow } from "../../Shared/Modal/Modal";
 
 export const Editor = () => {
     const [markdowns, setMarkdowns] = useState<NotesTypes[] | null>(NotesMock);
