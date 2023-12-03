@@ -15,7 +15,7 @@ export const MainPage = () => {
                     minHeight: "100vh",
                 }}
             >
-                <Login />
+                {/* <Login /> */}
                 <About />
             </Container>
         </>
