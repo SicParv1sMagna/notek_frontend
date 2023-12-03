@@ -14,7 +14,7 @@ const Breadcrumbs = () => {
 
     return (
         <Breadcrumb>
-            <Breadcrumb.Item linkAs={Link} linkProps={{ to: '/' }}>
+            <Breadcrumb.Item linkAs={Link} linkProps={{ to: '/notek_frontend' }}>
                 Home
             </Breadcrumb.Item>
             {breadcrumbs.map((breadcrumb, index) => (

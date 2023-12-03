@@ -11,6 +11,7 @@ export const Editor = () => {
             const fetchNotes = async () => {
                 const response = await fetch("/api/api/notes/markdown/");
                 const markdowns = await response.json();
+                console.log(markdowns);
                 if (markdowns == undefined) {
                     setMarkdowns(NotesMock);
                 } else {
@@ -26,7 +27,7 @@ export const Editor = () => {
     useEffect(() => {
         const fetchNotes = async () => {
             try {
-                const response = await fetch(`/api/api/notes/markdown?name=${search}`);
+                const response = await fetch(`/api/api/notes/markdown/?name=${search}`);
                 const searchResults = await response.json();
                 setMarkdowns(searchResults);
             } catch (error) {
@@ -37,13 +38,14 @@ export const Editor = () => {
                 setMarkdowns(filteredMarkdowns);
             }
         };
-
-        const delaySearch = setTimeout(() => {
-            fetchNotes();
-        }, 300);
+        if (search != "") {
+            const delaySearch = setTimeout(() => {
+                fetchNotes();
+            }, 300);
+            return () => clearTimeout(delaySearch);
+        }
 
         // Clear the timeout on component unmount or when search changes
-        return () => clearTimeout(delaySearch);
     }, [search]);
 
     return (
