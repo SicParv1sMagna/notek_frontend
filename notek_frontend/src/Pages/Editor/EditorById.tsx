@@ -4,7 +4,7 @@ import { Preview } from "../../Widgets/Preview/Preview";
 import { EditorNavbar } from "../../Widgets/Navbar/Navbar";
 import { useParams } from "react-router-dom";
 import { useMarkdown } from "../../Hooks/useMarkdown/useMarkdown";
-import { selectMarkdown, selectMarkdownContent } from "../../store/markdownSlice/markdownSelector";
+import { selectMarkdown } from "../../store/markdownSlice/markdownSelector";
 import { useSelector } from "react-redux";
 
 

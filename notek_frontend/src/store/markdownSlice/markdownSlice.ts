@@ -14,7 +14,8 @@ const initialState: InitialState = {
         Content: "",
         Status: "",
         User_ID: 0,
-        start_date: ""
+        start_date: "",
+        PhotoURL: '',
     },
     searchQuery: '',
 }

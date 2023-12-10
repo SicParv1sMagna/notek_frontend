@@ -21,7 +21,6 @@ export const useNote = () => {
     }
 
     const redirectById = (id: Number) => {
-        console.log(id);
         navigate(`/notek_frontend/editor/${id}`);
     }
 

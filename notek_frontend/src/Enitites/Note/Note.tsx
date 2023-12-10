@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Container } from "react-bootstrap";
 import { useNote } from "../../Hooks/useNote";
 import { JSXElementConstructor, MouseEventHandler, ReactElement, ReactNode, ReactPortal } from "react";
@@ -9,14 +9,13 @@ interface NoteProps {
     key: Number,
     children: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | null | undefined;
     id: Number,
-    photo: string,
     content: string,
+    photo: string,
 }
 
 export const Note: React.FC<NoteProps> = (props) => {
     const { redirectById } = useNote();
     const [isHovered, setHovered] = useState(false);
-    console.log("PROPS CONTENT", props.content);
     const handleClick: MouseEventHandler<HTMLElement> = () => {
         redirectById(props.id);
     }
@@ -34,9 +33,9 @@ export const Note: React.FC<NoteProps> = (props) => {
             <div>
                 <img
                     style={styles.icon}
-                    src={props.photo ?
-                        props.photo : document}
+                    src={props.photo || document}
                 />
+
             </div>
             <div style={styles.propsContainer}>
                 <div>

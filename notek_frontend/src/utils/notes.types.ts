@@ -5,6 +5,7 @@ export interface NotesTypes {
     Status: string,
     User_ID: number,
     start_date: string,
+    PhotoURL: string,
 }
 
 export const NotesMock : NotesTypes[] = [
@@ -15,6 +16,7 @@ export const NotesMock : NotesTypes[] = [
         Status: "Активен",
         User_ID: 1,
         start_date: "25 november 2023",
+        PhotoURL: '',
     },
     {
         Markdown_ID: 2,
@@ -23,5 +25,6 @@ export const NotesMock : NotesTypes[] = [
         Status: "Активен",
         User_ID: 1,
         start_date: "25 november 2023",
+        PhotoURL: '',
     }
 ]

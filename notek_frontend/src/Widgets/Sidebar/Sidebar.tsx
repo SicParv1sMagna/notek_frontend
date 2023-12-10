@@ -15,13 +15,14 @@ interface SidebarProps {
 export const Sidebar: React.FC<SidebarProps> = ({ setSearch }) => {
     const [isShow, setShow] = useState(false);
     const [mdName, setMdName] = useState("");
+    const [mdIcon, setMdIcon] = useState<File | null>(null);
 
     const { handleCreateMarkdown, searchMarkdowns } = useMarkdown();
 
     const dispatch = useDispatch();
     const searchQuery = useSelector(selectSearchQuery);
     const markdowns = useSelector(selectMarkdowns);
-
+    
     useEffect(() => {
         setSearch(searchQuery);
     }, [searchQuery]);
@@ -57,8 +58,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ setSearch }) => {
                     <Note
                         key={md.Markdown_ID}
                         id={md.Markdown_ID}
-                        photo={md.Photo_URL}
                         content={md.Content}
+                        photo={md.PhotoURL}
                     >
                         {md.Name}
                     </Note>
@@ -72,12 +73,17 @@ export const Sidebar: React.FC<SidebarProps> = ({ setSearch }) => {
                 submit="Создать"
                 setShow={setShow}
                 show={isShow}
-                onSubmit={() => { handleCreateMarkdown(mdName) }}
+                onSubmit={() => { handleCreateMarkdown(mdName, mdIcon) }}
             >
                 <Form.Control
                     type="text"
                     placeholder="Название"
                     onChange={handleChangeName}
+                />
+                <Form.Control
+                    type="file"
+                    placeholder="Иконка"
+                    onChange={(e) => setMdIcon(e.target.files?.[0] || null)}
                 />
             </ModalWindow>
         </div>

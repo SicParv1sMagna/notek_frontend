@@ -15,6 +15,8 @@ import SwitchComponent from '../../Shared/Switch/Switch';
 import { navbarStyles as styles } from '../../Shared/ui/navbars';
 import { editorStyles } from '../../Shared/ui/editor';
 import { useContributor } from '../../Hooks/useContributor/useContributor';
+import { ModalWindow } from '../../Shared/Modal/Modal';
+import { Contributors } from '../../Enitites/Contributors/Contributors';
 
 export const Navbars = () => {
     const isAuthenticated = useSelector(selectIsAuthenticated);
@@ -57,7 +59,18 @@ export const Navbars = () => {
                         </Nav.Link>
                         <SwitchComponent />
                     </Nav>
-                    {!isAuthenticated ? (
+                    {window.localStorage.getItem("jwtToken") ? (
+                        <Nav>
+                            <Nav.Link>
+                                <NavLink to="/notek_frontend/profile">
+                                    <Button>Профиль</Button>
+                                </NavLink>
+                            </Nav.Link>
+                            <Nav.Link>
+                                <Button onClick={handleLogout}>Выйти</Button>
+                            </Nav.Link>
+                        </Nav>
+                    ) : (
                         <Nav>
                             <Nav.Link>
                                 <NavLink to="/notek_frontend/authorization">
@@ -68,17 +81,6 @@ export const Navbars = () => {
                                 <NavLink to="/notek_frontend/registration">
                                     <Button>Зарегестрироваться</Button>
                                 </NavLink>
-                            </Nav.Link>
-                        </Nav>
-                    ) : (
-                        <Nav>
-                            <Nav.Link>
-                                <NavLink to="/notek_frontend/profile">
-                                    <Button>Профиль</Button>
-                                </NavLink>
-                            </Nav.Link>
-                            <Nav.Link>
-                                <Button onClick={handleLogout}>Выйти</Button>
                             </Nav.Link>
                         </Nav>
                     )
@@ -99,13 +101,14 @@ interface EditorNavbarProps {
 
 export const EditorNavbar: React.FC<EditorNavbarProps> = ({ name, id, date, input, userID }) => {
     const [formattedDate, setFormattedDate] = useState('');
+    const [isShow, setShow] = useState(false);
     const { deleteMarkdown, updateMarkdown } = useMarkdown();
-    const { handleRequestContribution } = useContributor();
+    const { handleRequestContribution, getContributorsByMarkdown, handleDeleteRole, handleChangeRole, contributors } = useContributor();
     const { getMe } = useUser();
     const navigate = useNavigate();
 
-    // Use useSelector to get the user ID from the Redux store
     const myId = useSelector(selectUser)?.userId;
+    const myRole = useSelector(selectUser)?.role;
 
     useEffect(() => {
         getMe();
@@ -119,35 +122,86 @@ export const EditorNavbar: React.FC<EditorNavbarProps> = ({ name, id, date, inpu
         }
     }, [date]);
 
+    useEffect(() => {
+        getContributorsByMarkdown(id);
+    }, [])
+
     const ActionButton = () => {
         if (!window.localStorage.getItem('jwtToken') || userID === -1) {
             return (
                 <ButtonGroup>
-                    <Button onClick={() => {navigate('/notek_frontend/authorization')}}>Логин</Button>
-                    <Button onClick={() => {navigate('/notek_frontend/registration')}}>Регистрация</Button>
+                    <Button onClick={() => { navigate('/notek_frontend/authorization') }}>Логин</Button>
+                    <Button onClick={() => { navigate('/notek_frontend/registration') }}>Регистрация</Button>
                 </ButtonGroup>
             );
         }
-        console.log(myId)
-        if (userID === myId) {
+        console.log(myRole);
+        if (userID === myId || myRole === 1 || myRole === 2) {
             return (
                 <ButtonGroup>
                     <Button variant="danger" onClick={(e) => deleteMarkdown(id, e)}>
                         Удалить
+                    </Button>
+                    <Button onClick={() => { setShow(true) }}>
+                        Настройки доступа
                     </Button>
                     <Button onClick={handleSaveMarkdown}>Сохранить</Button>
                 </ButtonGroup>
             );
         }
 
+        const isAllowedContribution = contributors.filter(contributor => {
+            return contributor.User_ID === myId && contributor.role !== "Требует подтверждения";
+        })
+        if (isAllowedContribution.length !== 0) {
+            return (
+                <ButtonGroup>
+                    <Button onClick={handleSaveMarkdown}>Сохранить</Button>
+                </ButtonGroup>
+            )
+        }
+
         if (userID !== myId) {
             return <ButtonGroup>
-                <Button onClick={() => {handleRequestContribution(id)}}>
+                <Button onClick={() => { handleRequestContribution(id) }}>
                     Запросить доступ
                 </Button>
             </ButtonGroup>
         }
     };
+
+    const SelectButton: React.FC<Record<string, any>> = ({
+        contributor
+    }) => {
+        if (userID === myId || myRole === 2) {
+            return (
+                <select
+                    value={contributor.role}
+                    onChange={(e) => handleChangeRole(e, contributor.Contributor_ID, id, "Админ")}
+                >
+                    <option value="В работе">В работе</option>
+                    {contributor.role !== 'В работе' && <option value="Отклонен">Отклонен</option>}
+                    {contributor.role === 'Завершен' && <option value="Завершен">Завершен</option>}
+                </select>
+            );
+        }
+
+        if (myRole === 1) {
+            return (
+                <select
+                    value={contributor.role}
+                    onChange={(e) => handleChangeRole(e, contributor.Contributor_ID, id, "Модератор")}
+                >
+                    <option value="В работе">В работе</option>
+                    {contributor.role !== 'В работе' && <option value="Отклонен">Отклонен</option>}
+                    {contributor.role !== 'Отклонен' && <option value="Завершен">Завершен</option>}
+                </select>
+            );
+        }
+
+        return null; // or render another default component if none of the conditions are met
+    }
+
 
     const handleSaveMarkdown = () => {
         const markdown: NotesTypes = {
@@ -157,6 +211,7 @@ export const EditorNavbar: React.FC<EditorNavbarProps> = ({ name, id, date, inpu
             Status: '',
             User_ID: 0,
             start_date: '',
+            PhotoURL: '',
         };
 
         updateMarkdown(markdown);
@@ -166,6 +221,53 @@ export const EditorNavbar: React.FC<EditorNavbarProps> = ({ name, id, date, inpu
         <div
             style={editorStyles.navbar}
         >
+            <ModalWindow
+                header="Настройки доступа"
+                close="Закрыть"
+                submit="Сохранить"
+                setShow={setShow}
+                show={isShow}
+            >
+                {contributors.map((contributor, idx) => (
+                    <Contributors
+                        id={contributor.Contributor_ID}
+                        key={idx}
+                    >
+                        <div style={{
+                            display: "flex",
+                            flexDirection: "row",
+                            justifyContent: "space-between",
+                            width: "100%"
+                        }}>
+                            <div style={{
+                                display: "flex",
+                                flexDirection: "row",
+                                alignItems: "center",
+                                justifyContent: "center"
+                            }}>
+                                {myId === userID || myRole === 2 ? (
+                                    <Button variant='danger' className="btn btn-primary btn-sm" onClick={() => { handleDeleteRole(contributor.Contributor_ID, id) }}>Удалить</Button>
+                                ) : (null)
+                                }
+                                <p style={{ marginBottom: 0, marginLeft: 10 }}>{contributor.email}</p>
+                            </div>
+                            {/* <select
+                                value={contributor.role}
+                                onChange={(e) => handleChangeRole(e, contributor.Contributor_ID)}
+                            >
+                                <option value="Требует подтверждения">Требует подтверждения</option>
+                                <option value="В работе">В работе</option>
+                                <option value="Отклонен">Отклонен</option>
+                                <option value="Удален">Удален</option>
+                                <option value="Завершен">Завершен</option>
+                            </select> */}
+                            <SelectButton
+                                contributor={contributor}
+                            />
+                        </div>
+                    </Contributors>
+                ))}
+            </ModalWindow>
             <Breadcrumbs />
             <h4 style={{ margin: 0 }}>
                 {name} {formattedDate}

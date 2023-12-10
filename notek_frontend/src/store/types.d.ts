@@ -21,3 +21,4 @@ export interface Token {
 export interface Markdowns {
     markdowns: NotesTypes[];
 }
+

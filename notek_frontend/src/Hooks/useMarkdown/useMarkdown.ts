@@ -8,30 +8,65 @@ export const useMarkdown = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
-    const handleCreateMarkdown = (name: string) => {
+    const handleCreateMarkdown = (name: string, image: File | null) => {
         api.post(
-          "/api/api/notes/markdown/create",
-          {
-            Name: name,
-            Status: "Активен"
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${window.localStorage.getItem("jwtToken")}`,
-              'Content-Type': 'application/json', // Include content type in headers
+            "/api/api/notes/markdown/create",
+            {
+                Name: name,
+                Status: "Активен"
             },
-          }
+            {
+                headers: {
+                    Authorization: `Bearer ${window.localStorage.getItem("jwtToken")}`,
+                    'Content-Type': 'application/json', // Include content type in headers
+                },
+            }
         )
-          .then((response) => {
-            if (response.status === 201) {
-              dispatch(markdownAction.addMarkdown(response.data));
-            } 
-          })
-          .catch((error) => {
-            console.error(error);
-          });
-      };
-      
+            .then((response) => {
+                if (response.status === 201) {
+                    let markdown: NotesTypes = {
+                        Markdown_ID: response.data.Markdown_ID,
+                        Name: response.data.Name,
+                        Content: response.data.Content,
+                        Status: response.data.Status,
+                        User_ID: response.data.User_ID,
+                        start_date: response.data.start_date,
+                        PhotoURL: "",  // You can initialize the property here if needed
+                    };
+
+                    if (image !== null) {
+                        const markdownId = response.data.Markdown_ID;
+                        const formData = new FormData();
+                        formData.append('image', image);
+
+                        api.post(
+                            `/api/api/notes/markdown/${markdownId}/image`, formData, {
+                            headers: {
+                                Authorization: `Bearer ${window.localStorage.getItem("jwtToken")}`,
+                                "Content-Type": "multipart/form-data",
+                            }
+                        })
+                            .then((imageResponse) => {
+                                // Modify the property here
+                                markdown.PhotoURL = imageResponse.data;
+
+                                // Now dispatch the action
+                                dispatch(markdownAction.addMarkdown(markdown));
+                            })
+                            .catch((imageError) => {
+                                console.error('Error uploading image', imageError);
+                            });
+                    } else {
+                        // If there's no image, dispatch the action immediately
+                        dispatch(markdownAction.addMarkdown(markdown));
+                    }
+                }
+            })
+            .catch((error) => {
+                console.error(error);
+            });
+    };
+
 
     const fetchMarkdowns = () => {
         api.get("/api/api/notes/markdown/")
