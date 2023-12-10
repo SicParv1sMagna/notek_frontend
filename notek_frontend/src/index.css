@@ -39,6 +39,14 @@
   --color-red-900: #7e0419;
   --filter-dark: invert(100%);
 
+  --color-tabs: rgba(46, 51, 63, 255);
+  --color-tabs-active: rgba(62, 70, 88, 255);
+  --color-font: rgba(225, 226, 229, 255);
+  --color-font-active: rgba(225, 226, 229);
+  --color-editor: rgba(46, 51, 63, 255);
+  --color-search: rgba(59, 65, 81, 255);
+
+
   background-color: transparent;
 
   /* overflow: hidden; */
@@ -58,18 +66,18 @@ HTML {
 body {
   overflow: hidden;
   height: 100%;
-  background-color: var(--color-dark-primary);
-  color: var(--color-dark-secondary);
+  background-color: var(--color-editor);
+  color: var(--color-font);
 }
 
 [light] {
-  --color-dark-primary: rgb(255, 226, 229);
-  --color-dark-secondary: rgb(25, 25, 26);
-  --color-pruple-400: #4200c3;
-  --color-purple-600: dodgerblue;
-  --color-gray-700: #a9aeb4;
-  --color-gray-200: #8f9498;
   --filter-dark: invert(0%);
+  --color-tabs-active: rgba(80, 141, 255, 255);
+  --color-tabs: rgba(245, 245, 245, 255);
+  --color-editor: rgba(255, 255, 255, 255);
+  --color-font: rgba(25, 25, 26, 255);
+  --color-font-active: rgba(225, 226, 229);
+  --color-search: whitesmoke;
 }
 
 @media screen and (max-width: 900px) {

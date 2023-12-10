@@ -3,58 +3,46 @@ import { Markdown } from "../../Widgets/Markdown/Markdown";
 import { Preview } from "../../Widgets/Preview/Preview";
 import { EditorNavbar } from "../../Widgets/Navbar/Navbar";
 import { useParams } from "react-router-dom";
-import { NotesMock, NotesTypes } from "../../utils/notes.types";
+import { useMarkdown } from "../../Hooks/useMarkdown/useMarkdown";
+import { selectMarkdown, selectMarkdownContent } from "../../store/markdownSlice/markdownSelector";
+import { useSelector } from "react-redux";
+
 
 export const EditorById = () => {
     const { id } = useParams();
-    const [input, setInput] = useState<string | undefined>();
-    const [note, setNote] = useState<NotesTypes | null>()
+    const { fetchMarkdown } = useMarkdown();
+    const [input, setInput] = useState<string>('');
+    const markdown = useSelector(selectMarkdown);
 
     useEffect(() => {
-        const fetchNote = async () => {
-            try {
-                const response = await fetch(`/api/api/notes/markdown/${id}`);
-                const markdown = await response.json();
-                console.log(markdown);
-                if (markdown == undefined) {
-                    setInput(NotesMock[Number(id) - 1].Content);
-                    setNote(NotesMock[Number(id) - 1]);
-                } else {
-                    setInput(markdown.Content);
-                    setNote(markdown);
-                }
-            }
-            catch {
-                setInput(NotesMock[Number(id) - 1].Content);
-                setNote(NotesMock[Number(id) - 1]);
-            }
-        }
+        // Fetch markdown data and update input when data is received
+        fetchMarkdown(Number(id));
+    }, [id]); // Trigger the effect whenever the id changes
 
-        fetchNote();
-    }, [])
+    useEffect(() => {
+        // Update input when markdown changes
+        setInput(markdown?.Content || '');
+    }, [markdown]); // Trigger the effect whenever the markdown changes
 
     return (
         <>
             <EditorNavbar
-                name={note?.Name}
-                id={note?.Markdown_ID}
-                date={note?.start_date}
+                name={markdown?.Name || ''}
+                id={markdown?.Markdown_ID || NaN}
+                date={markdown?.start_date || ''}
+                userID={markdown?.User_ID || -1}
+                input={input}
             />
             <div
                 style={{
-                    display: "flex",
-                    flexDirection: "row",
-                    justifyContent: "space-between",
+                    display: 'flex',
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
                 }}
             >
-                <Markdown
-                    input={input}
-                    setInput={setInput}
-                />
-                <Preview
-                    input={input}
-                />
+                <Markdown input={input} setInput={setInput} />
+                <Preview input={input} />
             </div>
         </>
-    )
-}
+    );
+};

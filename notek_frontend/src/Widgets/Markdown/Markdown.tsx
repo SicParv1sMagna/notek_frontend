@@ -1,19 +1,16 @@
 import React from "react";
+import { editorStyles as styles } from "../../Shared/ui/editor";
+
 interface MarkdownProps {
     input : string | undefined;
-    setInput : React.Dispatch<React.SetStateAction<string | undefined>>;
+    setInput : React.Dispatch<React.SetStateAction<string>>;
 }
 
 export const Markdown : React.FC<MarkdownProps> = ({ input, setInput }) => {
+
     return (
         <textarea
-            style={{
-                width: "50%",
-                height: "90vh",
-                padding: "20px",
-                fontSize: "1.5rem",
-                outline: "none",
-            }}
+            style={styles.markdown}
             autoFocus
             value={input}
             onChange={

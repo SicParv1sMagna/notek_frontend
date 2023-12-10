@@ -3,7 +3,7 @@ import { MainPage, Editor } from './Pages'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { EditorById } from './Pages/Editor/EditorById';
 import { Authorization } from './Pages/Authorization/Authorization';
-import { Registration } from './Widgets/Authorization/Registration';
+import { Registration } from './Pages/Registration/Registration';
 
 function App() {
 

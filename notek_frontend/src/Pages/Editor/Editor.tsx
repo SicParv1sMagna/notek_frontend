@@ -1,49 +1,21 @@
 import { useEffect, useState } from "react"
 import { Navbars, Sidebar } from "../../Widgets"
-import { NotesMock, NotesTypes } from "../../utils/notes.types"
+import { useMarkdown } from "../../Hooks/useMarkdown/useMarkdown"
 
 export const Editor = () => {
-    const [markdowns, setMarkdowns] = useState<NotesTypes[] | null>(NotesMock);
+    const { fetchMarkdowns, searchMarkdowns } = useMarkdown();
     const [search, setSearch] = useState<string>("");
 
+
     useEffect(() => {
-        try {
-            const fetchNotes = async () => {
-                const response = await fetch("/api/api/notes/markdown/");
-                const markdowns = await response.json();
-                console.log(markdowns);
-                if (markdowns == undefined) {
-                    setMarkdowns(NotesMock);
-                } else {
-                    setMarkdowns(markdowns);
-                }
-            }
-            fetchNotes();
-        } catch {
-            setMarkdowns(NotesMock);
-        }
+        fetchMarkdowns();
     }, [])
 
     useEffect(() => {
-        const fetchNotes = async () => {
-            try {
-                const response = await fetch(`/api/api/notes/markdown/?name=${search}`);
-                const searchResults = await response.json();
-                setMarkdowns(searchResults);
-            } catch (error) {
-                console.error("Error fetching search results:", error);
-                const filteredMarkdowns = NotesMock?.filter((md) =>
-                    md.Name.toLowerCase().includes(search.toLowerCase())
-                );
-                setMarkdowns(filteredMarkdowns);
-            }
-        };
-        if (search != "") {
-            const delaySearch = setTimeout(() => {
-                fetchNotes();
-            }, 300);
-            return () => clearTimeout(delaySearch);
-        }
+        const delaySearch = setTimeout(() => {
+            searchMarkdowns(search);
+        }, 100);
+        return () => clearTimeout(delaySearch);
 
         // Clear the timeout on component unmount or when search changes
     }, [search]);
@@ -51,7 +23,9 @@ export const Editor = () => {
     return (
         <>
             <Navbars />
-            <Sidebar markdowns={markdowns} setSearch={setSearch} />
+            <Sidebar
+                setSearch={setSearch}
+            />
         </>
     )
 }

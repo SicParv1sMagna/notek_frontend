@@ -1,18 +1,10 @@
-import { Button, Modal, Form } from "react-bootstrap";
-import { ModalContent, modal } from "../../utils/modal.types";
+import { Button, Modal, ModalProps } from "react-bootstrap";
 
-export const ModalWindow = (props: ModalContent) => {
-    const handleSubmitForm = (e: { preventDefault: () => void; }) => {
-        e.preventDefault();
-
-        console.log("success");
-    }
+export const ModalWindow = (props: ModalProps) => {
 
     const Header = () => {
-        const type = props.type;
 
-        const modalText = modal[type];
-        const headerText = modalText.header;
+        const headerText = props.header;
 
         return (
             <div>
@@ -22,72 +14,23 @@ export const ModalWindow = (props: ModalContent) => {
     }
 
     const Footer = () => {
-        const type = props.type;
-
-        const modalText = modal[type];
-        const closeButtonText = modalText.footer.close;
-        const submitButtonText = modalText.footer.submit;
+        const closeButtonText = props.close;
+        const submitButtonText = props.submit;
 
         return (
             <div>
                 <Button
-                    onClick={() => { props.setOpenModal(false) }}
+                    onClick={() => { props.setShow(false) }}
                 >{closeButtonText}</Button>
                 <Button
                     style={{ marginLeft: "10px" }}
+                    onClick={() => {
+                        props.onSubmit();
+                        props.setShow(false);
+                    }}
                 >{submitButtonText}</Button>
             </div>
         );
-    }
-
-    const Body = () => {
-        const type = props.type;
-
-        switch (type) {
-            case "auth":
-                return (
-                    <Form onSubmit={(e) => handleSubmitForm(e)}>
-                        <Form.Group className="mb-3" controlId="formBasicEmail">
-                            <Form.Label>Почта</Form.Label>
-                            <Form.Control type="email" placeholder="Почта" required />
-                        </Form.Group>
-
-                        <Form.Group className="mb-3" controlId="formBasicPassword">
-                            <Form.Label>Пароль</Form.Label>
-                            <Form.Control type="password" placeholder="Пароль" required />
-                        </Form.Group>
-                    </Form>
-                )
-            case "register":
-                return (
-                    <Form>
-                        <Form.Group className="mb-3" controlId="formBasicSurname">
-                            <Form.Label>Фамилия</Form.Label>
-                            <Form.Control type="text" placeholder="Фамилия" />
-                        </Form.Group>
-                        <Form.Group className="mb-3" controlId="formBasicName">
-                            <Form.Label>Имя</Form.Label>
-                            <Form.Control type="text" placeholder="Имя" />
-                        </Form.Group>
-                        <Form.Group className="mb-3" controlId="formBasicMiddleName">
-                            <Form.Label>Отчество</Form.Label>
-                            <Form.Control type="text" placeholder="Отчество" />
-                        </Form.Group>
-                        <Form.Group className="mb-3" controlId="formBasicEmail">
-                            <Form.Label>Email address</Form.Label>
-                            <Form.Control type="email" placeholder="Enter email" />
-                        </Form.Group>
-                        <Form.Group className="mb-3" controlId="formBasicPassword">
-                            <Form.Label>Password</Form.Label>
-                            <Form.Control type="password" placeholder="Password" />
-                        </Form.Group>
-                        <Form.Group className="mb-3" controlId="formBasicRPassword">
-                            <Form.Label>Подтвердите пароль</Form.Label>
-                            <Form.Control type="password" placeholder="Password" />
-                        </Form.Group>
-                    </Form>
-                )
-        }
     }
 
     return (
@@ -98,7 +41,7 @@ export const ModalWindow = (props: ModalContent) => {
                 </Modal.Title>
             </Modal.Header>
             <Modal.Body>
-                <Body />
+                {props.children}
             </Modal.Body>
             <Modal.Footer>
                 <Footer />

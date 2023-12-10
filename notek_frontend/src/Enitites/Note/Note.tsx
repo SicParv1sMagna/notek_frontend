@@ -1,21 +1,22 @@
 import React, { useState } from "react";
-import { Button, Container } from "react-bootstrap";
+import { Container } from "react-bootstrap";
 import { useNote } from "../../Hooks/useNote";
 import { JSXElementConstructor, MouseEventHandler, ReactElement, ReactNode, ReactPortal } from "react";
 import { noteStyle as styles } from "../../Shared/ui/note";
-import screpka from "../../assets/icons8-скрепка-32.png";
+import document from "../../assets/document.png";
 
 interface NoteProps {
     key: Number,
     children: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | null | undefined;
     id: Number,
     photo: string,
+    content: string,
 }
 
 export const Note: React.FC<NoteProps> = (props) => {
-    const { deleteMarkdown, redirectById } = useNote();
+    const { redirectById } = useNote();
     const [isHovered, setHovered] = useState(false);
-
+    console.log("PROPS CONTENT", props.content);
     const handleClick: MouseEventHandler<HTMLElement> = () => {
         redirectById(props.id);
     }
@@ -27,26 +28,32 @@ export const Note: React.FC<NoteProps> = (props) => {
                 ...styles.container,
                 ...(isHovered && styles.containerHover)
             }}
-            onMouseEnter={() => {setHovered(true)}}
-            onMouseLeave={() => {setHovered(false)}}
+            onMouseEnter={() => { setHovered(true) }}
+            onMouseLeave={() => { setHovered(false) }}
         >
-            <div style={{display: "flex", flexDirection:"row"}}>
+            <div>
                 <img
-                    style={{
-                        width: "25px",
-                        height: "auto",
-                    }}
+                    style={styles.icon}
                     src={props.photo ?
-                    props.photo : screpka} />
-                <p
-                    style={{
-                        margin: 0,
-                        fontSize: "0.7em",
-                        color: "white"
-                    }}
-                >{props.children}</p>
+                        props.photo : document}
+                />
             </div>
-            <Button size="sm" variant="danger" onClick={(e) => { deleteMarkdown(props.id, e) }}>Удалить</Button>
+            <div style={styles.propsContainer}>
+                <div>
+                    <h4
+                        style={styles.headerFont}
+                    >
+                        {props.children}
+                    </h4>
+                </div>
+                <div>
+                    <p
+                        style={styles.contentFont}
+                    >
+                        {props.content || "Никто еще не отредактировал данную запись"}
+                    </p>
+                </div>
+            </div>
         </Container>
     )
 }
