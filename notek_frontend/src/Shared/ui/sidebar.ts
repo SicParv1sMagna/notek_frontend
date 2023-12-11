@@ -4,7 +4,8 @@ export const sidebarStyle: Record<string, React.CSSProperties> = {
     container: {
         display: "flex",
         flexDirection: "column",
-        width: window.innerWidth > 600 ? "20vw" : "100vw",
+        // width: window.innerWidth > 600 ? "20vw" : "100vw",
+        width: "100vw",
         height: "100vh",
         fontSize: "1.5em",
         backgroundColor: "var(--color-tabs)",

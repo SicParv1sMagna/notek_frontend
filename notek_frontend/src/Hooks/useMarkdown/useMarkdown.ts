@@ -1,3 +1,4 @@
+import { useState } from "react"
 import { api } from "../../api/axiosConfig"
 import { NotesMock, NotesTypes } from "../../utils/notes.types"
 import { useDispatch } from "react-redux"
@@ -7,6 +8,10 @@ import { useNavigate } from "react-router-dom"
 export const useMarkdown = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    const [showNotification, setNotification] = useState<Record<string, any>>({
+        show: false,
+        message: '',
+    });
 
     const handleCreateMarkdown = (name: string, image: File | null) => {
         api.post(
@@ -47,26 +52,37 @@ export const useMarkdown = () => {
                             }
                         })
                             .then((imageResponse) => {
-                                // Modify the property here
                                 markdown.PhotoURL = imageResponse.data;
-
-                                // Now dispatch the action
                                 dispatch(markdownAction.addMarkdown(markdown));
+                                setNotification({
+                                    show: true,
+                                    message: "Маркдаун создан!"
+                                })
                             })
                             .catch((imageError) => {
                                 console.error('Error uploading image', imageError);
+                                setNotification({
+                                    show: true,
+                                    message: "Ошибка при загрузке фотографии!",
+                                })
                             });
                     } else {
-                        // If there's no image, dispatch the action immediately
                         dispatch(markdownAction.addMarkdown(markdown));
+                        setNotification({
+                            show: true,
+                            message: "Маркдаун создан!"
+                        })
                     }
                 }
             })
             .catch((error) => {
                 console.error(error);
+                setNotification({
+                    show: true,
+                    message: "Ошибка при создании маркдауна!"
+                })
             });
     };
-
 
     const fetchMarkdowns = () => {
         api.get("/api/api/notes/markdown/")
@@ -92,7 +108,6 @@ export const useMarkdown = () => {
     const fetchMarkdown = (id: number) => {
         api.get(`/api/api/notes/markdown/${id}`)
             .then(response => {
-                console.log(response.data)
                 dispatch(markdownAction.setMarkdown(response.data))
             })
             .catch(() => {
@@ -112,9 +127,16 @@ export const useMarkdown = () => {
                 if (response.status === 200) {
                     navigate("/notek_frontend/editor")
                 }
+                setNotification({
+                    show: true,
+                    message: 'Маркдаун удален!'
+                })
             })
-            .catch(error => {
-                console.error(error);
+            .catch(() => {
+                setNotification({
+                    show:true,
+                    message: 'Ошибка при удалении маркдауна!'
+                })
             })
     }
 
@@ -124,7 +146,7 @@ export const useMarkdown = () => {
             {
                 Markdown_ID: markdown.Markdown_ID,
                 Name: markdown.Name,
-                Content: markdown.Content,
+                Content: markdown.Content || ' ',
             },
             {
                 headers: {
@@ -133,11 +155,17 @@ export const useMarkdown = () => {
             })
             .then(response => {
                 if (response.status === 200) {
-                    console.log(response);
+                    setNotification({
+                        show: true,
+                        message: "Маркдаун успешно изменен!"
+                    });
                 }
             })
-            .catch(error => {
-                console.error(error);
+            .catch(() => {
+                setNotification({
+                    show: true,
+                    message: "Ошибка при изменении маркдауна!",
+                })
             })
     };
 
@@ -148,6 +176,8 @@ export const useMarkdown = () => {
         searchMarkdowns,
         deleteMarkdown,
         updateMarkdown,
+        showNotification,
+        setNotification
     }
 }
 

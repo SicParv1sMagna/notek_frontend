@@ -5,7 +5,7 @@ import { Button, ButtonGroup } from 'react-bootstrap';
 import { NavLink, useNavigate } from 'react-router-dom';
 import React, { useEffect, useState } from 'react';
 import Breadcrumbs from '../Breadcrumbs/Breadcrumbs';
-import { selectIsAuthenticated, selectUser } from '../../store/userSlice/userSelectors';
+import { selectUser } from '../../store/userSlice/userSelectors';
 import { useDispatch, useSelector } from 'react-redux';
 import { userAction } from '../../store/userSlice/userSlice';
 import { useMarkdown } from '../../Hooks/useMarkdown/useMarkdown';
@@ -17,9 +17,9 @@ import { editorStyles } from '../../Shared/ui/editor';
 import { useContributor } from '../../Hooks/useContributor/useContributor';
 import { ModalWindow } from '../../Shared/Modal/Modal';
 import { Contributors } from '../../Enitites/Contributors/Contributors';
+import { Notification } from '../Notifications/Notifications';
 
 export const Navbars = () => {
-    const isAuthenticated = useSelector(selectIsAuthenticated);
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
@@ -57,6 +57,13 @@ export const Navbars = () => {
                                 Редактор
                             </NavLink>
                         </Nav.Link>
+                        {window.localStorage.getItem("jwtToken") ? (
+                            <Nav.Link>
+                                <NavLink to="/notek_frontend/requests">
+                                    Черновые запросы
+                                </NavLink>
+                            </Nav.Link>
+                        ) : null}
                         <SwitchComponent />
                     </Nav>
                     {window.localStorage.getItem("jwtToken") ? (
@@ -102,8 +109,8 @@ interface EditorNavbarProps {
 export const EditorNavbar: React.FC<EditorNavbarProps> = ({ name, id, date, input, userID }) => {
     const [formattedDate, setFormattedDate] = useState('');
     const [isShow, setShow] = useState(false);
-    const { deleteMarkdown, updateMarkdown } = useMarkdown();
-    const { handleRequestContribution, getContributorsByMarkdown, handleDeleteRole, handleChangeRole, contributors } = useContributor();
+    const { deleteMarkdown, updateMarkdown, showNotification, setNotification } = useMarkdown();
+    const { handleRequestContribution, getContributorsByMarkdown, handleDeleteRole, handleChangeRole, contributors, showContributorNotification, setContributorNotification } = useContributor();
     const { getMe } = useUser();
     const navigate = useNavigate();
 
@@ -126,6 +133,19 @@ export const EditorNavbar: React.FC<EditorNavbarProps> = ({ name, id, date, inpu
         getContributorsByMarkdown(id);
     }, [])
 
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setNotification({
+                show: false,
+                message: showNotification.message,
+            });
+        }, 3000);
+
+        return () => {
+            clearTimeout(timer);
+        }
+    }, [showNotification.show])
+
     const ActionButton = () => {
         if (!window.localStorage.getItem('jwtToken') || userID === -1) {
             return (
@@ -135,7 +155,7 @@ export const EditorNavbar: React.FC<EditorNavbarProps> = ({ name, id, date, inpu
                 </ButtonGroup>
             );
         }
-        console.log(myRole);
+
         if (userID === myId || myRole === 1 || myRole === 2) {
             return (
                 <ButtonGroup>
@@ -178,10 +198,12 @@ export const EditorNavbar: React.FC<EditorNavbarProps> = ({ name, id, date, inpu
                 <select
                     value={contributor.role}
                     onChange={(e) => handleChangeRole(e, contributor.Contributor_ID, id, "Админ")}
+                    style={{width: "150px", overflow: 'hidden'}}
                 >
+                    {contributor.role !== "В работе" && <option value="Требует подвтерждения">Требует подтверждения</option>}
                     <option value="В работе">В работе</option>
                     {contributor.role !== 'В работе' && <option value="Отклонен">Отклонен</option>}
-                    {contributor.role === 'Завершен' && <option value="Завершен">Завершен</option>}
+                    {contributor.role !== 'Завершен' && <option value="Завершен">Завершен</option>}
                 </select>
             );
         }
@@ -194,7 +216,7 @@ export const EditorNavbar: React.FC<EditorNavbarProps> = ({ name, id, date, inpu
                 >
                     <option value="В работе">В работе</option>
                     {contributor.role !== 'В работе' && <option value="Отклонен">Отклонен</option>}
-                    {contributor.role !== 'Отклонен' && <option value="Завершен">Завершен</option>}
+                    {contributor.role !== 'В работе' && <option value="Завершен">Завершен</option>}
                 </select>
             );
         }
@@ -251,16 +273,6 @@ export const EditorNavbar: React.FC<EditorNavbarProps> = ({ name, id, date, inpu
                                 }
                                 <p style={{ marginBottom: 0, marginLeft: 10 }}>{contributor.email}</p>
                             </div>
-                            {/* <select
-                                value={contributor.role}
-                                onChange={(e) => handleChangeRole(e, contributor.Contributor_ID)}
-                            >
-                                <option value="Требует подтверждения">Требует подтверждения</option>
-                                <option value="В работе">В работе</option>
-                                <option value="Отклонен">Отклонен</option>
-                                <option value="Удален">Удален</option>
-                                <option value="Завершен">Завершен</option>
-                            </select> */}
                             <SelectButton
                                 contributor={contributor}
                             />
@@ -273,6 +285,8 @@ export const EditorNavbar: React.FC<EditorNavbarProps> = ({ name, id, date, inpu
                 {name} {formattedDate}
             </h4>
             <ActionButton />
+            <Notification show={showNotification.show} message={showNotification.message}/>
+            <Notification show={showContributorNotification.show} message={showContributorNotification.message}/>
         </div>
     );
 };

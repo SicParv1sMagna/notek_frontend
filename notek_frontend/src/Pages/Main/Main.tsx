@@ -1,4 +1,4 @@
-import { Navbars, About, Login } from "../../Widgets";
+import { Navbars, About } from "../../Widgets";
 import Container from "react-bootstrap/Container";
 
 export const MainPage = () => {
@@ -15,7 +15,6 @@ export const MainPage = () => {
                     minHeight: "100vh",
                 }}
             >
-                {/* <Login /> */}
                 <About />
             </Container>
         </>

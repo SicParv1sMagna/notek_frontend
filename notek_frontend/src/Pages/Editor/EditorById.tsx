@@ -7,7 +7,6 @@ import { useMarkdown } from "../../Hooks/useMarkdown/useMarkdown";
 import { selectMarkdown } from "../../store/markdownSlice/markdownSelector";
 import { useSelector } from "react-redux";
 
-
 export const EditorById = () => {
     const { id } = useParams();
     const { fetchMarkdown } = useMarkdown();

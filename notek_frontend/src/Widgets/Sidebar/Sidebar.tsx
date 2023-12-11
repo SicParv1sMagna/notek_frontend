@@ -7,6 +7,7 @@ import { useMarkdown } from "../../Hooks/useMarkdown/useMarkdown";
 import { useDispatch, useSelector } from "react-redux";
 import { selectMarkdowns, selectSearchQuery } from "../../store/markdownSlice/markdownSelector";
 import { markdownAction } from "../../store/markdownSlice/markdownSlice";
+import { Notification } from "../Notifications/Notifications";
 
 interface SidebarProps {
     setSearch: any;
@@ -17,7 +18,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ setSearch }) => {
     const [mdName, setMdName] = useState("");
     const [mdIcon, setMdIcon] = useState<File | null>(null);
 
-    const { handleCreateMarkdown, searchMarkdowns } = useMarkdown();
+    const { handleCreateMarkdown, searchMarkdowns, showNotification, setNotification } = useMarkdown();
 
     const dispatch = useDispatch();
     const searchQuery = useSelector(selectSearchQuery);
@@ -26,6 +27,19 @@ export const Sidebar: React.FC<SidebarProps> = ({ setSearch }) => {
     useEffect(() => {
         setSearch(searchQuery);
     }, [searchQuery]);
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setNotification({
+                show: false,
+                message: showNotification.message,
+            });
+        }, 3000);
+
+        return () => {
+            clearTimeout(timer);
+        }
+    }, [showNotification.show])
 
     const handleChangeName = (e: React.ChangeEvent<HTMLInputElement>) => {
         setMdName(e.target.value);
@@ -86,6 +100,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ setSearch }) => {
                     onChange={(e) => setMdIcon(e.target.files?.[0] || null)}
                 />
             </ModalWindow>
+            <Notification show={showNotification.show} message={showNotification.message}/>
         </div>
     );
 };

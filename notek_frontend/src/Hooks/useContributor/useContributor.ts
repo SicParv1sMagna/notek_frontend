@@ -1,11 +1,13 @@
-import { useDispatch } from "react-redux";
 import { api } from "../../api/axiosConfig";
 import { useState } from "react";
 import { Contributor } from "../../utils/contributor.types";
 
 export const useContributor = () => {
-    const dispatch = useDispatch();
     const [contributors, setContributors] = useState<Contributor[]>([]);
+    const [showContributorNotification, setContributorNotification] = useState<Record<string, any>>({
+        show: false,
+        message: '',
+    });
 
     const handleRequestContribution = (id: number) => {
         api.put(
@@ -18,11 +20,17 @@ export const useContributor = () => {
                 },
             }
         )
-            .then((response) => {
-                console.log(response);
+            .then(() => {
+                setContributorNotification({
+                    show: true,
+                    message: "Заявка подана!"
+                })
             })
-            .catch((error) => {
-                console.error(error);
+            .catch(() => {
+                setContributorNotification({
+                    show: true,
+                    message: "Вы уже подавали заявку!"
+                })
             });
     };
 
@@ -41,6 +49,7 @@ export const useContributor = () => {
                     api.get(`/api/api/contributor/role/${id}/${contributor.Contributor_ID}`)
                         .then(response => {
                             contributor.role = response.data;
+                            console.log(response);
                         })
                         .catch(error => {
                             console.error(error);
@@ -53,8 +62,20 @@ export const useContributor = () => {
             })
     }
 
-    const handleChangeRole = (e: React.ChangeEvent<HTMLSelectElement>, id: Number, markdown_id: number, role: string) => {
+    const handleChangeRole = (e: React.ChangeEvent<HTMLSelectElement>, id: number, markdown_id: number, role: string) => {
         const newRole = e.target.value;
+    
+        const updateContributor = (idToUpdate: number, newRole: string) => {
+            setContributors(prevContributors => {
+                return prevContributors.map(contributor => {
+                    if (contributor.Contributor_ID === idToUpdate) {
+                        return { ...contributor, role: newRole };
+                    }
+                    return contributor;
+                });
+            });
+        };
+    
         if (role === "Админ") {
             api.put(`/api/api/contributor/admin`, {
                 Contributor_ID: id,
@@ -65,16 +86,12 @@ export const useContributor = () => {
                     Authorization: `Bearer ${window.localStorage.getItem("jwtToken")}`
                 }
             })
-                .then(() => {
-                    contributors.forEach((contributor) => {
-                        if (contributor.Contributor_ID === id) {
-                            contributor.role = newRole;
-                        }
-                    })
-                })
-                .catch(error => {
-                    console.error(error);
-                })
+            .then(() => {
+                updateContributor(id, newRole);
+            })
+            .catch(error => {
+                console.error(error);
+            });
         } else {
             api.put(`/api/api/contributor/moderator`, {
                 Contributor_ID: id,
@@ -85,14 +102,15 @@ export const useContributor = () => {
                     Authorization: `Bearer ${window.localStorage.getItem("jwtToken")}`
                 }
             })
-                .then(response => {
-                    console.log(response);
-                })
-                .catch(error => {
-                    console.error(error);
-                })
+            .then(() => {
+                updateContributor(id, newRole);
+            })
+            .catch(error => {
+                console.error(error);
+            });
         }
-    }
+    };
+    
 
     const handleDeleteRole = (contirbutor_id: number, markdown_id: number) => {
         api.delete(`/api/api/contributor/delete`, {
@@ -121,5 +139,7 @@ export const useContributor = () => {
         handleDeleteRole,
         handleChangeRole,
         contributors,
+        showContributorNotification,
+        setContributorNotification
     }
 };
