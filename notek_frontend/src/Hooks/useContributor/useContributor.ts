@@ -9,6 +9,24 @@ export const useContributor = () => {
         message: '',
     });
 
+    const handleAddMarkdownToContributor = (id: number) => {
+        api.post(`/api/api/notes/markdown/add-md-to-contributor/${id}`, null, {
+            headers: {
+                Authorization: `Bearer ${window.localStorage.getItem("jwtToken")}`,
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(() => {
+            setContributorNotification({
+                show: true,
+                message: "Маркдаун добавлен в черновик",
+            });
+        })
+        .catch((error) => {
+            console.error(error);
+        })
+    }
+
     const handleRequestContribution = (id: number) => {
         api.put(
             `/api/api/contributor/${id}/user`,
@@ -64,7 +82,7 @@ export const useContributor = () => {
 
     const handleChangeRole = (e: React.ChangeEvent<HTMLSelectElement>, id: number, markdown_id: number, role: string) => {
         const newRole = e.target.value;
-    
+
         const updateContributor = (idToUpdate: number, newRole: string) => {
             setContributors(prevContributors => {
                 return prevContributors.map(contributor => {
@@ -75,7 +93,7 @@ export const useContributor = () => {
                 });
             });
         };
-    
+
         if (role === "Админ") {
             api.put(`/api/api/contributor/admin`, {
                 Contributor_ID: id,
@@ -86,12 +104,12 @@ export const useContributor = () => {
                     Authorization: `Bearer ${window.localStorage.getItem("jwtToken")}`
                 }
             })
-            .then(() => {
-                updateContributor(id, newRole);
-            })
-            .catch(error => {
-                console.error(error);
-            });
+                .then(() => {
+                    updateContributor(id, newRole);
+                })
+                .catch(error => {
+                    console.error(error);
+                });
         } else {
             api.put(`/api/api/contributor/moderator`, {
                 Contributor_ID: id,
@@ -102,15 +120,15 @@ export const useContributor = () => {
                     Authorization: `Bearer ${window.localStorage.getItem("jwtToken")}`
                 }
             })
-            .then(() => {
-                updateContributor(id, newRole);
-            })
-            .catch(error => {
-                console.error(error);
-            });
+                .then(() => {
+                    updateContributor(id, newRole);
+                })
+                .catch(error => {
+                    console.error(error);
+                });
         }
     };
-    
+
 
     const handleDeleteRole = (contirbutor_id: number, markdown_id: number) => {
         api.delete(`/api/api/contributor/delete`, {
@@ -134,6 +152,7 @@ export const useContributor = () => {
     }
 
     return {
+        handleAddMarkdownToContributor,
         handleRequestContribution,
         getContributorsByMarkdown,
         handleDeleteRole,

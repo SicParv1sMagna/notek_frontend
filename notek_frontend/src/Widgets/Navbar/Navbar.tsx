@@ -110,7 +110,7 @@ export const EditorNavbar: React.FC<EditorNavbarProps> = ({ name, id, date, inpu
     const [formattedDate, setFormattedDate] = useState('');
     const [isShow, setShow] = useState(false);
     const { deleteMarkdown, updateMarkdown, showNotification, setNotification } = useMarkdown();
-    const { handleRequestContribution, getContributorsByMarkdown, handleDeleteRole, handleChangeRole, contributors, showContributorNotification, setContributorNotification } = useContributor();
+    const { handleAddMarkdownToContributor, getContributorsByMarkdown, handleDeleteRole, handleChangeRole, contributors, showContributorNotification, setContributorNotification } = useContributor();
     const { getMe } = useUser();
     const navigate = useNavigate();
 
@@ -183,7 +183,7 @@ export const EditorNavbar: React.FC<EditorNavbarProps> = ({ name, id, date, inpu
 
         if (userID !== myId) {
             return <ButtonGroup>
-                <Button onClick={() => { handleRequestContribution(id) }}>
+                <Button onClick={() => { handleAddMarkdownToContributor(id) }}>
                     Запросить доступ
                 </Button>
             </ButtonGroup>
