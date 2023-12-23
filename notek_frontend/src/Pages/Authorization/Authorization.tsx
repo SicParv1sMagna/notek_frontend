@@ -72,7 +72,7 @@ export const Authorization = () => {
                         null
                     )}
                     <Button variant="primary" onClick={handleButtonClick}>
-                        Submit
+                        Логин
                     </Button>
                 </Form>
             </div>

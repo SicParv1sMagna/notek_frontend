@@ -34,7 +34,7 @@ export const Login = () => {
                     <Form.Control type="password" placeholder="Password" />
                 </Form.Group>
                 <Button variant="primary" onClick={handleButtonClick}>
-                    Submit
+                    Авторизоваться
                 </Button>
             </Form>
         </>

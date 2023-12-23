@@ -1,6 +1,7 @@
 import { api } from "../../api/axiosConfig";
 import { useState } from "react";
 import { Contributor } from "../../utils/contributor.types";
+import { useNavigate } from "react-router-dom";
 
 export const useContributor = () => {
     const [contributors, setContributors] = useState<Contributor[]>([]);
@@ -8,6 +9,7 @@ export const useContributor = () => {
         show: false,
         message: '',
     });
+    const navigate = useNavigate();
 
     const handleAddMarkdownToContributor = (id: number) => {
         api.post(`/api/api/notes/markdown/add-md-to-contributor/${id}`, null, {
@@ -16,15 +18,15 @@ export const useContributor = () => {
                 'Content-Type': 'application/json'
             }
         })
-        .then(() => {
-            setContributorNotification({
-                show: true,
-                message: "Маркдаун добавлен в черновик",
-            });
-        })
-        .catch((error) => {
-            console.error(error);
-        })
+            .then(() => {
+                setContributorNotification({
+                    show: true,
+                    message: "Маркдаун добавлен в черновик",
+                });
+            })
+            .catch((error) => {
+                console.error(error);
+            })
     }
 
     const handleRequestContribution = (id: number) => {
@@ -43,6 +45,7 @@ export const useContributor = () => {
                     show: true,
                     message: "Заявка подана!"
                 })
+                navigate("/notek_frontend/editor")
             })
             .catch(() => {
                 setContributorNotification({
@@ -129,7 +132,6 @@ export const useContributor = () => {
         }
     };
 
-
     const handleDeleteRole = (contirbutor_id: number, markdown_id: number) => {
         api.delete(`/api/api/contributor/delete`, {
             headers: {
@@ -151,10 +153,77 @@ export const useContributor = () => {
             })
     }
 
+    const getDraftRequest = async (email : string) => {
+        try {
+            const draft = [];
+            const response = await api.get(`/api/api/contributor/?email=${email}&status=Черновик`);
+            for (const request of response.data) {
+                try {
+                    const res = await api.get(`/api/api/contributor/${request.Contributor_ID}?status=Черновик`);
+                    draft.push(res.data);
+                } catch (error) {
+                    console.error(`Error fetching contributor ${request.Contributor_ID}:`, error);
+                }
+            }
+    
+            return draft;
+        } catch (error) {
+            console.error(error);
+            return [];
+        }
+    };
+
+    const getDraftLength = async (email : string) => {
+        try {
+            const draftLength = [];
+            const response = await api.get(`/api/api/contributor/?email=${email}&status=Черновик`);
+    
+            for (const request of response.data) {
+                try {
+                    const res = await api.get(`/api/api/contributor/${request.Contributor_ID}?status=Черновик`);
+                    draftLength.push(res.data);
+                } catch (error) {
+                    console.error(`Error fetching contributor ${request.Contributor_ID}:`, error);
+                }
+            }
+            console.log(draftLength)
+            return draftLength[0].markdown.length;
+        } catch(error) {
+            console.error(error)
+        }
+    }
+    
+    const handleDeleteDraft = (e: { stopPropagation: () => void; }, id: Number, drafts: any[], setDrafts: React.Dispatch<React.SetStateAction<any[]>>) => {
+        e.stopPropagation();
+
+        api.delete(`/api/api/contributor/${id}/delete`,
+        {
+            headers: {
+                Authorization: `Bearer ${window.localStorage.getItem("jwtToken")}`
+            }
+        })
+        .then((response) => {
+            if (response.status === 200) {
+                const filteredDrafts = drafts.map(draft => ({
+                    ...draft,
+                    markdown: draft.markdown.filter(md => md.Markdown_ID !== id)
+                }));
+            
+                setDrafts(filteredDrafts);
+            }
+        })
+        .catch(error => {
+            console.error(error)
+        })
+    }
+
     return {
         handleAddMarkdownToContributor,
+        handleDeleteDraft,
         handleRequestContribution,
         getContributorsByMarkdown,
+        getDraftRequest,
+        getDraftLength,
         handleDeleteRole,
         handleChangeRole,
         contributors,

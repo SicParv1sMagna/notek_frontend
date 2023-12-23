@@ -28,8 +28,10 @@ const userSlice = createSlice({
         setToken(state, action: PayloadAction<string>) {
             state.token = { token: action.payload };
         },
-        deleteToken(state) {
+        logout(state) {
             state.token = undefined;
+            state.user = undefined;
+            state.markdowns = undefined
         }
     }
 });

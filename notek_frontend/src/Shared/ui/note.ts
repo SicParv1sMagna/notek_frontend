@@ -16,6 +16,7 @@ export const noteStyle: Record<string, React.CSSProperties> = {
         padding: "15px",
         backgroundColor: "var(--color-tabs)",
         borderBottom: "0.5px solid black",
+        justifyContent: "space-between"
     },
     containerHover: {
         backgroundColor: "var(--color-tabs-active)",
@@ -32,6 +33,7 @@ export const noteStyle: Record<string, React.CSSProperties> = {
         display: "-webkit-box",
         WebkitLineClamp: "1",
         WebkitBoxOrient: "vertical",
+        textAlign: "start",
         overflow: "hidden",
         color: "var(--color-font)"
     },

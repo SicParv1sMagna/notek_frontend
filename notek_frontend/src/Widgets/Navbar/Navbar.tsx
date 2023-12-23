@@ -1,7 +1,7 @@
 import Navbar from 'react-bootstrap/Navbar';
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
-import { Button, ButtonGroup } from 'react-bootstrap';
+import { Badge, Button, ButtonGroup } from 'react-bootstrap';
 import { NavLink, useNavigate } from 'react-router-dom';
 import React, { useEffect, useState } from 'react';
 import Breadcrumbs from '../Breadcrumbs/Breadcrumbs';
@@ -20,14 +20,48 @@ import { Contributors } from '../../Enitites/Contributors/Contributors';
 import { Notification } from '../Notifications/Notifications';
 
 export const Navbars = () => {
+    const [draftCount, setDraftCount] = useState<number>(0);
+    const [email, setEmail] = useState<string>(""); // Assuming a default value of an empty string
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    const { getMe } = useUser();
+    const { getDraftLength } = useContributor();
 
     const handleLogout = () => {
         window.localStorage.removeItem("jwtToken");
-        dispatch(userAction.deleteToken());
+        dispatch(userAction.logout());
         navigate("/notek_frontend/");
     }
+
+    const selectedEmail = useSelector(selectUser)?.email;
+
+    useEffect(() => {
+        setEmail(selectedEmail || "");
+    }, [selectedEmail]);
+
+    useEffect(() => {
+        getMe();
+        const fetchDraftsLength = async () => {
+            try {
+                if (email !== undefined) {
+                    const length = await getDraftLength(email);
+                    console.log("opa")
+                    console.log(length)
+                    if (length !== undefined) {
+                        setDraftCount(length);
+                    } else {
+                        setDraftCount(0);
+                    }
+                }
+            } catch (error) {
+                console.error(error);
+            }
+        }
+
+        fetchDraftsLength();
+    }, [selectedEmail]); // Include email as a dependency
+
+
 
     return (
         <Navbar
@@ -57,17 +91,30 @@ export const Navbars = () => {
                                 Редактор
                             </NavLink>
                         </Nav.Link>
-                        {window.localStorage.getItem("jwtToken") ? (
-                            <Nav.Link>
-                                <NavLink to="/notek_frontend/requests">
-                                    Черновые запросы
-                                </NavLink>
-                            </Nav.Link>
-                        ) : null}
                         <SwitchComponent />
                     </Nav>
                     {window.localStorage.getItem("jwtToken") ? (
                         <Nav>
+                            {window.location.pathname === "/notek_frontend/editor" ? (
+                                <Nav.Link>
+                                    <ButtonGroup>
+                                            <Button
+                                                disabled={draftCount === 0}
+                                                onClick={() => {navigate("/notek_frontend/requests")}}
+                                            >
+                                                Черновые запросы <Badge bg="warning">{String(draftCount)}</Badge>
+                                            </Button>
+                                            <Button
+                                                onClick={()=> {navigate("/notek_frontend/history")}}
+                                            >
+                                                История
+                                            </Button>
+                                    </ButtonGroup>
+                                </Nav.Link>
+                            ) : (
+                                null
+                            )
+                            }
                             <Nav.Link>
                                 <NavLink to="/notek_frontend/profile">
                                     <Button>Профиль</Button>
@@ -86,7 +133,7 @@ export const Navbars = () => {
                             </Nav.Link>
                             <Nav.Link>
                                 <NavLink to="/notek_frontend/registration">
-                                    <Button>Зарегестрироваться</Button>
+                                    <Button>Зарегистрироваться</Button>
                                 </NavLink>
                             </Nav.Link>
                         </Nav>
@@ -198,7 +245,7 @@ export const EditorNavbar: React.FC<EditorNavbarProps> = ({ name, id, date, inpu
                 <select
                     value={contributor.role}
                     onChange={(e) => handleChangeRole(e, contributor.Contributor_ID, id, "Админ")}
-                    style={{width: "150px", overflow: 'hidden'}}
+                    style={{ width: "150px", overflow: 'hidden' }}
                 >
                     {contributor.role !== "В работе" && <option value="Требует подвтерждения">Требует подтверждения</option>}
                     <option value="В работе">В работе</option>
@@ -285,8 +332,8 @@ export const EditorNavbar: React.FC<EditorNavbarProps> = ({ name, id, date, inpu
                 {name} {formattedDate}
             </h4>
             <ActionButton />
-            <Notification show={showNotification.show} message={showNotification.message}/>
-            <Notification show={showContributorNotification.show} message={showContributorNotification.message}/>
+            <Notification show={showNotification.show} message={showNotification.message} />
+            <Notification show={showContributorNotification.show} message={showContributorNotification.message} />
         </div>
     );
 };

@@ -102,7 +102,7 @@ export const Registration = () => {
                         null
                     )}
                     <Button variant="primary" onClick={handleButtonClick}>
-                        Submit
+                        Зарегистрироваться
                     </Button>
                 </Form>
             </div>
