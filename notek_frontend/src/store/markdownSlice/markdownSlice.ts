@@ -5,6 +5,7 @@ interface InitialState {
     markdowns?: NotesTypes[] | null,
     markdown: NotesTypes,
     searchQuery: string,
+    contributorID: number
 }
 
 const initialState: InitialState = {
@@ -18,14 +19,17 @@ const initialState: InitialState = {
         PhotoURL: '',
     },
     searchQuery: '',
+    contributorID: 0,
 }
 
 const markdownSlice = createSlice({
     name: "markdown",
     initialState: initialState,
     reducers: {
-        setAllMarkdowns(state, action: PayloadAction<NotesTypes[] | null>) {
-            state.markdowns = action.payload;
+        setAllMarkdowns(state, action: PayloadAction<any | null>) {
+            state.markdowns = action.payload.Markdowns;
+            state.contributorID = action.payload.Contributor_id; 
+            console.log(action.payload.Contributor_id)
         },
         addMarkdown(state, action: PayloadAction<NotesTypes>) {
             state.markdowns?.push(action.payload);

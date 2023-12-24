@@ -1,4 +1,5 @@
 export interface NotesTypes {
+    
     Markdown_ID: number,
     Name: string,
     Content: string,

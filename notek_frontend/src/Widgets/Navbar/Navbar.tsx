@@ -18,14 +18,13 @@ import { useContributor } from '../../Hooks/useContributor/useContributor';
 import { ModalWindow } from '../../Shared/Modal/Modal';
 import { Contributors } from '../../Enitites/Contributors/Contributors';
 import { Notification } from '../Notifications/Notifications';
+import { selectContributorId } from '../../store/markdownSlice/markdownSelector';
 
 export const Navbars = () => {
-    const [draftCount, setDraftCount] = useState<number>(0);
-    const [email, setEmail] = useState<string>(""); // Assuming a default value of an empty string
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const { getMe } = useUser();
-    const { getDraftLength } = useContributor();
+    const { getDraftByContributor } = useContributor();
+    const [draftsLength, setDraftsLength] = useState<number>(0)
 
     const handleLogout = () => {
         window.localStorage.removeItem("jwtToken");
@@ -33,35 +32,18 @@ export const Navbars = () => {
         navigate("/notek_frontend/");
     }
 
-    const selectedEmail = useSelector(selectUser)?.email;
+    const contributorId = useSelector(selectContributorId);
 
     useEffect(() => {
-        setEmail(selectedEmail || "");
-    }, [selectedEmail]);
-
-    useEffect(() => {
-        getMe();
-        const fetchDraftsLength = async () => {
-            try {
-                if (email !== undefined) {
-                    const length = await getDraftLength(email);
-                    console.log("opa")
-                    console.log(length)
-                    if (length !== undefined) {
-                        setDraftCount(length);
-                    } else {
-                        setDraftCount(0);
-                    }
-                }
-            } catch (error) {
-                console.error(error);
+        const fetchData = async () => {
+            if (contributorId !== undefined) {
+                const drafts = await getDraftByContributor(contributorId);
+                setDraftsLength(drafts.length);
             }
-        }
-
-        fetchDraftsLength();
-    }, [selectedEmail]); // Include email as a dependency
-
-
+        };
+    
+        fetchData();
+    }, [contributorId]);
 
     return (
         <Navbar
@@ -98,17 +80,17 @@ export const Navbars = () => {
                             {window.location.pathname === "/notek_frontend/editor" ? (
                                 <Nav.Link>
                                     <ButtonGroup>
-                                            <Button
-                                                disabled={draftCount === 0}
-                                                onClick={() => {navigate("/notek_frontend/requests")}}
-                                            >
-                                                Черновые запросы <Badge bg="warning">{String(draftCount)}</Badge>
-                                            </Button>
-                                            <Button
-                                                onClick={()=> {navigate("/notek_frontend/history")}}
-                                            >
-                                                История
-                                            </Button>
+                                        <Button
+                                            disabled={contributorId === 0}
+                                            onClick={() => { navigate("/notek_frontend/requests") }}
+                                        >
+                                            Черновые запросы <Badge bg="warning">{draftsLength}</Badge>
+                                        </Button>
+                                        <Button
+                                            onClick={() => { navigate("/notek_frontend/history") }}
+                                        >
+                                            История
+                                        </Button>
                                     </ButtonGroup>
                                 </Nav.Link>
                             ) : (
@@ -157,7 +139,7 @@ export const EditorNavbar: React.FC<EditorNavbarProps> = ({ name, id, date, inpu
     const [formattedDate, setFormattedDate] = useState('');
     const [isShow, setShow] = useState(false);
     const { deleteMarkdown, updateMarkdown, showNotification, setNotification } = useMarkdown();
-    const { handleAddMarkdownToContributor, getContributorsByMarkdown, handleDeleteRole, handleChangeRole, contributors, showContributorNotification, setContributorNotification } = useContributor();
+    const { handleAddMarkdownToContributor, getContributorsByMarkdown, handleDeleteRole, handleChangeRole, contributors, showContributorNotification } = useContributor();
     const { getMe } = useUser();
     const navigate = useNavigate();
 

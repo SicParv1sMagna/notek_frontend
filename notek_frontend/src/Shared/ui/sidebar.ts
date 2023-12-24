@@ -9,7 +9,7 @@ export const sidebarStyle: Record<string, React.CSSProperties> = {
         height: "100vh",
         fontSize: "1.5em",
         backgroundColor: "var(--color-tabs)",
-        overflowY: "scroll",
+        overflowY: "auto",
     },
     header: {
         display: "flex",

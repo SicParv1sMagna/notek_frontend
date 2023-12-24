@@ -5,6 +5,7 @@ import { EditorById } from './Pages/Editor/EditorById';
 import { Authorization } from './Pages/Authorization/Authorization';
 import { Registration } from './Pages/Registration/Registration';
 import { Requests } from './Pages/Requests/Requests';
+import { History } from './Pages/History/History';
 
 function App() {
 
@@ -18,6 +19,7 @@ function App() {
           <Route path="/notek_frontend/authorization" element={<Authorization />} />
           <Route path="/notek_frontend/registration" element={<Registration />} />
           <Route path="/notek_frontend/requests" element={<Requests />} />
+          <Route path="/notek_frontend/history" element={<History />} />
         </Routes>
       </BrowserRouter>
     </>

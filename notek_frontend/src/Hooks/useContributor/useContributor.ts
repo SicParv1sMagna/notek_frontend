@@ -153,68 +153,66 @@ export const useContributor = () => {
             })
     }
 
-    const getDraftRequest = async (email : string) => {
+    const getAllRequests = async (status: string, start_date: string, end_date: string) => {
         try {
-            const draft = [];
-            const response = await api.get(`/api/api/contributor/?email=${email}&status=Черновик`);
-            for (const request of response.data) {
-                try {
-                    const res = await api.get(`/api/api/contributor/${request.Contributor_ID}?status=Черновик`);
-                    draft.push(res.data);
-                } catch (error) {
-                    console.error(`Error fetching contributor ${request.Contributor_ID}:`, error);
+            const personalData = await api.get(`/api/api/user/me`, {
+                headers: {
+                    Authorization: `Bearer ${window.localStorage.getItem("jwtToken")}`
                 }
-            }
-    
-            return draft;
-        } catch (error) {
-            console.error(error);
-            return [];
-        }
-    };
+            })
+            console.log(personalData)
+            const email = personalData.data.Email;
 
-    const getDraftLength = async (email : string) => {
-        try {
-            const draftLength = [];
-            const response = await api.get(`/api/api/contributor/?email=${email}&status=Черновик`);
-    
-            for (const request of response.data) {
-                try {
-                    const res = await api.get(`/api/api/contributor/${request.Contributor_ID}?status=Черновик`);
-                    draftLength.push(res.data);
-                } catch (error) {
-                    console.error(`Error fetching contributor ${request.Contributor_ID}:`, error);
+            const response = await api.get(`/api/api/contributor/?email=${email}&status=${status}&start_date=${start_date}&end_date=${end_date}`, {
+                headers: {
+                    Authorization: `Bearer ${window.localStorage.getItem("jwtToken")}`
                 }
-            }
-            console.log(draftLength)
-            return draftLength[0].markdown.length;
-        } catch(error) {
+            })
+
+            console.log(response.data)
+            return response.data;
+        } catch (error) {
             console.error(error)
         }
     }
-    
+
+    const getDraftByContributor = async (contributorId: number) => {
+        try {
+            if (contributorId > 0) {
+                const response = await api.get(`/api/api/contributor/${contributorId}`, {
+                    headers: {
+                        Authorization: `Bearer ${window.localStorage.getItem("jwtToken")}`
+                    }
+                });
+                return response.data.markdown;
+            }
+        } catch (error) {
+            console.error(error);
+        }
+        return [];
+    };
+
     const handleDeleteDraft = (e: { stopPropagation: () => void; }, id: Number, drafts: any[], setDrafts: React.Dispatch<React.SetStateAction<any[]>>) => {
         e.stopPropagation();
 
         api.delete(`/api/api/contributor/${id}/delete`,
-        {
-            headers: {
-                Authorization: `Bearer ${window.localStorage.getItem("jwtToken")}`
-            }
-        })
-        .then((response) => {
-            if (response.status === 200) {
-                const filteredDrafts = drafts.map(draft => ({
-                    ...draft,
-                    markdown: draft.markdown.filter(md => md.Markdown_ID !== id)
-                }));
-            
-                setDrafts(filteredDrafts);
-            }
-        })
-        .catch(error => {
-            console.error(error)
-        })
+            {
+                headers: {
+                    Authorization: `Bearer ${window.localStorage.getItem("jwtToken")}`
+                }
+            })
+            .then((response) => {
+                if (response.status === 200) {
+                    const filteredDrafts = drafts.filter(md => {
+                        return md.Markdown_ID !== id;
+                    })
+
+                    setDrafts(filteredDrafts);
+                }
+            })
+            .catch(error => {
+                console.error(error)
+            })
     }
 
     return {
@@ -222,8 +220,8 @@ export const useContributor = () => {
         handleDeleteDraft,
         handleRequestContribution,
         getContributorsByMarkdown,
-        getDraftRequest,
-        getDraftLength,
+        getAllRequests,
+        getDraftByContributor,
         handleDeleteRole,
         handleChangeRole,
         contributors,

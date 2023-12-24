@@ -43,7 +43,6 @@ export const useMarkdown = () => {
                         const markdownId = response.data.Markdown_ID;
                         const formData = new FormData();
                         formData.append('image', image);
-
                         api.post(
                             `/api/api/notes/markdown/${markdownId}/image`, formData, {
                             headers: {
@@ -85,7 +84,11 @@ export const useMarkdown = () => {
     };
 
     const fetchMarkdowns = () => {
-        api.get("/api/api/notes/markdown/")
+        api.get("/api/api/notes/markdown/", {
+            headers: {
+                Authorization: `Bearer ${window.localStorage.getItem("jwtToken")}`
+            }
+        })
             .then(response => {
                 dispatch(markdownAction.setAllMarkdowns(response.data))
             })
@@ -96,7 +99,11 @@ export const useMarkdown = () => {
 
     const searchMarkdowns = (search: string) => {
         // dispatch(markdownAction.setSearchQuery(search))
-        api.get(`/api/api/notes/markdown/?name=${search}`)
+        api.get(`/api/api/notes/markdown/?name=${search}`, {
+            headers: {
+                Authorization: `Bearer ${window.localStorage.getItem("jwtToken")}`
+            }
+        })
             .then(response => {
                 dispatch(markdownAction.setAllMarkdowns(response.data))
             })

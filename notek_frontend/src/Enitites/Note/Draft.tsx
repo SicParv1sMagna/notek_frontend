@@ -23,8 +23,6 @@ export const Draft: React.FC<NoteProps> = (props) => {
         redirectById(props.id)
     }
 
-    
-
     return (
         <Container
             onClick={handleClick}

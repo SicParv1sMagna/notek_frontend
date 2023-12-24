@@ -33,6 +33,7 @@ export const editorStyles : Record<string, React.CSSProperties> = {
         fontSize: "1.5rem",
         backgroundColor: "var(--color-editor)",
         color: "var(--color-font)",
-        border: "0.8px solid whitesmoke"
+        border: "0.8px solid whitesmoke",
+        overflowY: "scroll"
     }
 }

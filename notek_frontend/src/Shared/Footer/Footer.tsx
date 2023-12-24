@@ -10,11 +10,9 @@ interface FooterProps {
 
 export const Footer: React.FC<FooterProps> = (props) => {
     const handleRequestContribution = () => {
-        props.items.map(draft => {
-            draft.markdown.map(md => {
-                props.fn(md.Markdown_ID);
-                props.setItems([]);
-            });
+        props.items.map(md => {
+            props.fn(md.Markdown_ID);
+            props.setItems([]);
         });
     };
 

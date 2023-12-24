@@ -5,32 +5,36 @@ import { useEffect, useState } from "react";
 import { Draft } from "../../Enitites/Note/Draft";
 import { Footer } from "../../Shared/Footer/Footer";
 import { useNavigate } from "react-router-dom";
+import { selectUser } from "../../store/userSlice/userSelectors";
+import { useSelector } from "react-redux";
+import { selectContributorId } from "../../store/markdownSlice/markdownSelector";
 
 export const Requests = () => {
-    const { getDraftRequest, handleRequestContribution } = useContributor();
+    const { getDraftByContributor, handleRequestContribution } = useContributor();
     const navigate = useNavigate();
+    const [email, setEmail] = useState<string>("");
+
+    const selectedEmail = useSelector(selectUser)?.email;
+
+    useEffect(() => {
+        setEmail(selectedEmail || "");
+    }, [selectedEmail]);
 
     const [drafts, setDrafts] = useState<any[]>([]);
 
+    const contributorId = useSelector(selectContributorId);
+
     useEffect(() => {
-        const fetchDrafts = async () => {
-            try {
-                const response = await getDraftRequest("example@example.com");
-                console.log(response)
-                setDrafts(response);
-            } catch (error) {
-                console.error(error);
+        const fetchData = async () => {
+            if (contributorId !== undefined) {
+                const drafts = await getDraftByContributor(contributorId);
+                setDrafts(drafts);
+                console.log(drafts);
             }
         };
 
-        fetchDrafts();
-    }, []);
-
-    useEffect(() => {
-        if (drafts[0]?.markdown?.length === 0) {
-            navigate("/notek_frontend/editor")
-        } 
-    }, [drafts])
+        fetchData();
+    }, [contributorId]);
 
     return (
         <>
@@ -43,20 +47,19 @@ export const Requests = () => {
                 }}>
                 <h2>Черновые запросы</h2>
                 <div>
-                    {drafts.map(draft => (
-                        draft.markdown.map(md => (
-                            <Draft
-                                key={md.Markdown_ID}
-                                id={md.Markdown_ID}
-                                content={md.Content}
-                                photo={md.PhotoURL}
-                                drafts={drafts}
-                                setDrafts={setDrafts}
-                            >
-                                {md.Name}
-                            </Draft>
-                        ))
-                    ))}
+                    {drafts.map(md => (
+                        <Draft
+                            key={md.Markdown_ID}
+                            id={md.Markdown_ID}
+                            content={md.Content}
+                            photo={md.PhotoURL}
+                            drafts={drafts}
+                            setDrafts={setDrafts}
+                        >
+                            {md.Name}
+                        </Draft>
+                    ))
+                    }
                 </div>
                 <Footer
                     fn={handleRequestContribution}

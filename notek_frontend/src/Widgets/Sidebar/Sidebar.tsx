@@ -50,6 +50,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ setSearch }) => {
         searchMarkdowns(e.target.value);
     }
 
+    console.log(markdowns)
+
     return (
         <div style={styles.container}>
             <div style={styles.header}>
@@ -67,6 +69,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ setSearch }) => {
                     +
                 </Button>
             </div>
+            <div style={{overflowY: "auto", paddingBottom: "75px"}}>
             {markdowns ? (
                 markdowns.map((md: any) => (
                     <Note
@@ -81,6 +84,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ setSearch }) => {
             ) : (
                 <div>No markdowns available.</div>
             )}
+            </div>
             <ModalWindow
                 header="Создать маркдаун"
                 close={"Закрыть"}
