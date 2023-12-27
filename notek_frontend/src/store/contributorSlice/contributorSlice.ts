@@ -8,12 +8,14 @@ interface InitialState {
     startDateQuery: string,
     endDateQuery: string,
     status: string,
+    email: string,
 }
 
 const initialState: InitialState = {
     startDateQuery: '',
     endDateQuery: '',
     status: '',
+    email: '',
 }
 
 const contributorSlice = createSlice({
@@ -36,6 +38,11 @@ const contributorSlice = createSlice({
         setStatus(state, action: PayloadAction<string|null>) {
             if (action.payload !== null) {
                 state.status = action.payload;
+            }
+        },
+        setEmail(state, action: PayloadAction<string|null>) {
+            if (action.payload !== null) {
+                state.email = action.payload;
             }
         }
     }

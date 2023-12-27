@@ -1,27 +1,32 @@
-import { useEffect, useState } from "react";
-import { Markdown } from "../../Widgets/Markdown/Markdown";
-import { Preview } from "../../Widgets/Preview/Preview";
-import { EditorNavbar } from "../../Widgets/Navbar/Navbar";
-import { useParams } from "react-router-dom";
+import { Container } from "react-bootstrap"
+import { useParams } from "react-router-dom"
 import { useMarkdown } from "../../Hooks/useMarkdown/useMarkdown";
-import { selectMarkdown } from "../../store/markdownSlice/markdownSelector";
+import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
+import { selectMarkdown } from "../../store/markdownSlice/markdownSelector";
+import { Preview } from "../../Widgets/Preview/Preview";
+import { Markdown } from "../../Widgets/Markdown/Markdown";
+import { EditorNavbar } from "../../Widgets/Navbar/Navbar";
+import { CreateMarkdown } from "../CreateMarkdown/CreateMarkdown";
 
-export const EditorById = () => {
+export const MarkdownEdit = () => {
     const { id } = useParams();
+    if (Number(id) === 0) {
+        return <CreateMarkdown />
+    }
+
     const { fetchMarkdown } = useMarkdown();
     const [input, setInput] = useState<string>('');
+
     const markdown = useSelector(selectMarkdown);
 
     useEffect(() => {
-        // Fetch markdown data and update input when data is received
         fetchMarkdown(Number(id));
-    }, [id]); // Trigger the effect whenever the id changes
+    }, [id])
 
     useEffect(() => {
-        // Update input when markdown changes
         setInput(markdown?.Content || '');
-    }, [markdown]); // Trigger the effect whenever the markdown changes
+    }, [markdown])
 
     return (
         <>
@@ -31,18 +36,18 @@ export const EditorById = () => {
                 date={markdown?.start_date || ''}
                 userID={markdown?.User_ID || -1}
                 input={input}
-                icon={markdown?.PhotoURL}
+                icon={markdown.PhotoURL}
             />
             <div
                 style={{
                     display: 'flex',
                     flexDirection: 'row',
-                    justifyContent: 'space-between',
+                    justifyContent: 'space-between'
                 }}
             >
                 <Markdown input={input} setInput={setInput} />
                 <Preview input={input} />
             </div>
         </>
-    );
-};
+    )
+}

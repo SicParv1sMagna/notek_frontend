@@ -50,8 +50,6 @@ export const Sidebar: React.FC<SidebarProps> = ({ setSearch }) => {
         searchMarkdowns(e.target.value);
     }
 
-    console.log(markdowns)
-
     return (
         <div style={styles.container}>
             <div style={styles.header}>

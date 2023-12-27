@@ -6,9 +6,10 @@ import { Authorization } from './Pages/Authorization/Authorization';
 import { Registration } from './Pages/Registration/Registration';
 import { Requests } from './Pages/Requests/Requests';
 import { History } from './Pages/History/History';
+import { MarkdownEdit } from './Pages/MarkdownEdit/MarkdownEdit';
+import { HistoryById } from './Pages/History/HistoryById';
 
 function App() {
-
   return (
     <>
       <BrowserRouter>
@@ -20,6 +21,8 @@ function App() {
           <Route path="/notek_frontend/registration" element={<Registration />} />
           <Route path="/notek_frontend/requests" element={<Requests />} />
           <Route path="/notek_frontend/history" element={<History />} />
+          <Route path="/notek_frontend/history/:id" element={<HistoryById />} />
+          <Route path="/notek_frontend/edit-markdown/:id" element={<MarkdownEdit />} />
         </Routes>
       </BrowserRouter>
     </>

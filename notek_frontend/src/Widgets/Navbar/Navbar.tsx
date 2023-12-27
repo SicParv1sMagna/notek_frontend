@@ -1,7 +1,7 @@
 import Navbar from 'react-bootstrap/Navbar';
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
-import { Badge, Button, ButtonGroup } from 'react-bootstrap';
+import { Badge, Button, ButtonGroup, Form } from 'react-bootstrap';
 import { NavLink, useNavigate } from 'react-router-dom';
 import React, { useEffect, useState } from 'react';
 import Breadcrumbs from '../Breadcrumbs/Breadcrumbs';
@@ -24,6 +24,7 @@ export const Navbars = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const { getDraftByContributor } = useContributor();
+    const { getMe } = useUser();
     const [draftsLength, setDraftsLength] = useState<number>(0)
 
     const handleLogout = () => {
@@ -35,15 +36,21 @@ export const Navbars = () => {
     const contributorId = useSelector(selectContributorId);
 
     useEffect(() => {
+        getMe();
+    }, [])
+
+    useEffect(() => {
         const fetchData = async () => {
             if (contributorId !== undefined) {
                 const drafts = await getDraftByContributor(contributorId);
                 setDraftsLength(drafts.length);
             }
         };
-    
+
         fetchData();
     }, [contributorId]);
+
+    const role = useSelector(selectUser)?.role;
 
     return (
         <Navbar
@@ -58,48 +65,57 @@ export const Navbars = () => {
                 <Navbar.Toggle aria-controls="responsive-navbar-nav" />
                 <Navbar.Collapse id="responsive-navbar-nav">
                     <Nav className="me-auto" style={{ alignItems: "center" }}>
-                        <Nav.Link>
-                            <NavLink to="/notek_frontend/about">
-                                About
-                            </NavLink>
-                        </Nav.Link>
-                        <Nav.Link>
-                            <NavLink to="/notek_frontend/github">
-                                GitHub
-                            </NavLink>
-                        </Nav.Link>
-                        <Nav.Link>
-                            <NavLink to="/notek_frontend/editor">
-                                Редактор
-                            </NavLink>
-                        </Nav.Link>
+                        {role !== 2 ? (
+                            < Nav.Link >
+                                <NavLink to="/notek_frontend/editor">
+                                    Редактор
+                                </NavLink>
+                            </Nav.Link>
+                        ) : (
+                            <>
+                                <Nav.Link>
+                                    <NavLink to="/notek_frontend/editor">
+                                        Таблица маркдаунов
+                                    </NavLink>
+                                </Nav.Link>
+                            </>
+                        )}
                         <SwitchComponent />
                     </Nav>
                     {window.localStorage.getItem("jwtToken") ? (
                         <Nav>
                             {window.location.pathname === "/notek_frontend/editor" ? (
                                 <Nav.Link>
-                                    <ButtonGroup>
+                                    {role !== 2 ? (
                                         <Button
-                                            disabled={contributorId === 0}
+                                            disabled={contributorId === 0 || draftsLength === 0}
                                             onClick={() => { navigate("/notek_frontend/requests") }}
+                                            style={{ marginRight: "15px" }}
                                         >
                                             Черновые запросы <Badge bg="warning">{draftsLength}</Badge>
                                         </Button>
+                                    ) : (
                                         <Button
                                             onClick={() => { navigate("/notek_frontend/history") }}
                                         >
-                                            История
+                                            Таблица запросов
                                         </Button>
-                                    </ButtonGroup>
+                                    )}
                                 </Nav.Link>
                             ) : (
                                 null
                             )
                             }
                             <Nav.Link>
+                                <Button
+                                    onClick={() => { navigate("/notek_frontend/history") }}
+                                >
+                                    История
+                                </Button>
+                            </Nav.Link>
+                            <Nav.Link>
                                 <NavLink to="/notek_frontend/profile">
-                                    <Button>Профиль</Button>
+                                    <Button disabled>Профиль</Button>
                                 </NavLink>
                             </Nav.Link>
                             <Nav.Link>
@@ -123,7 +139,7 @@ export const Navbars = () => {
                     }
                 </Navbar.Collapse>
             </Container>
-        </Navbar>
+        </Navbar >
     )
 }
 
@@ -133,13 +149,31 @@ interface EditorNavbarProps {
     date?: string;
     input: string;
     userID: number;
+    icon: string;
 }
 
-export const EditorNavbar: React.FC<EditorNavbarProps> = ({ name, id, date, input, userID }) => {
-    const [formattedDate, setFormattedDate] = useState('');
+export const EditorNavbar: React.FC<EditorNavbarProps> = ({
+    name,
+    id,
+    date,
+    input,
+    userID,
+    icon,
+}) => {
+    const [formattedDate, setFormattedDate] = useState("");
     const [isShow, setShow] = useState(false);
-    const { deleteMarkdown, updateMarkdown, showNotification, setNotification } = useMarkdown();
-    const { handleAddMarkdownToContributor, getContributorsByMarkdown, handleDeleteRole, handleChangeRole, contributors, showContributorNotification } = useContributor();
+    const [isEditing, setEditing] = useState(false);
+    const [mdName, setMdName] = useState(name);
+    const { deleteMarkdown, updateMarkdown, showNotification, setNotification } =
+        useMarkdown();
+    const {
+        handleAddMarkdownToContributor,
+        getContributorsByMarkdown,
+        handleDeleteRole,
+        handleChangeRole,
+        contributors,
+        showContributorNotification,
+    } = useContributor();
     const { getMe } = useUser();
     const navigate = useNavigate();
 
@@ -160,7 +194,7 @@ export const EditorNavbar: React.FC<EditorNavbarProps> = ({ name, id, date, inpu
 
     useEffect(() => {
         getContributorsByMarkdown(id);
-    }, [])
+    }, []);
 
     useEffect(() => {
         const timer = setTimeout(() => {
@@ -172,15 +206,19 @@ export const EditorNavbar: React.FC<EditorNavbarProps> = ({ name, id, date, inpu
 
         return () => {
             clearTimeout(timer);
-        }
-    }, [showNotification.show])
+        };
+    }, [showNotification.show]);
 
     const ActionButton = () => {
-        if (!window.localStorage.getItem('jwtToken') || userID === -1) {
+        if (!window.localStorage.getItem("jwtToken") || userID === -1) {
             return (
                 <ButtonGroup>
-                    <Button onClick={() => { navigate('/notek_frontend/authorization') }}>Логин</Button>
-                    <Button onClick={() => { navigate('/notek_frontend/registration') }}>Регистрация</Button>
+                    <Button onClick={() => navigate("/notek_frontend/authorization")}>
+                        Логин
+                    </Button>
+                    <Button onClick={() => navigate("/notek_frontend/registration")}>
+                        Регистрация
+                    </Button>
                 </ButtonGroup>
             );
         }
@@ -188,51 +226,71 @@ export const EditorNavbar: React.FC<EditorNavbarProps> = ({ name, id, date, inpu
         if (userID === myId || myRole === 1 || myRole === 2) {
             return (
                 <ButtonGroup>
-                    <Button variant="danger" onClick={(e) => deleteMarkdown(id, e)}>
+                    <Button
+                        variant="danger"
+                        onClick={(e) => deleteMarkdown(id, e)}
+                    >
                         Удалить
                     </Button>
-                    <Button onClick={() => { setShow(true) }}>
-                        Настройки доступа
-                    </Button>
-                    <Button onClick={handleSaveMarkdown}>Сохранить</Button>
+                    {!isEditing && (
+                        <Button onClick={() => setEditing(true)}>Редактировать</Button>
+                    )}
+                    {isEditing && <Button onClick={handleSaveMarkdown}>Сохранить</Button>}
                 </ButtonGroup>
             );
         }
 
-        const isAllowedContribution = contributors.filter(contributor => {
-            return contributor.User_ID === myId && contributor.role !== "Требует подтверждения";
-        })
+        const isAllowedContribution = contributors.filter((contributor) => {
+            return (
+                contributor.User_ID === myId &&
+                contributor.role !== "Требует подтверждения"
+            );
+        });
         if (isAllowedContribution.length !== 0) {
             return (
                 <ButtonGroup>
                     <Button onClick={handleSaveMarkdown}>Сохранить</Button>
                 </ButtonGroup>
-            )
+            );
         }
 
         if (userID !== myId) {
-            return <ButtonGroup>
-                <Button onClick={() => { handleAddMarkdownToContributor(id) }}>
-                    Запросить доступ
-                </Button>
-            </ButtonGroup>
+            return (
+                <ButtonGroup>
+                    <Button
+                        onClick={() => {
+                            handleAddMarkdownToContributor(id);
+                        }}
+                    >
+                        Запросить доступ
+                    </Button>
+                </ButtonGroup>
+            );
         }
     };
 
     const SelectButton: React.FC<Record<string, any>> = ({
-        contributor
+        contributor,
     }) => {
         if (userID === myId || myRole === 2) {
             return (
                 <select
                     value={contributor.role}
-                    onChange={(e) => handleChangeRole(e, contributor.Contributor_ID, id, "Админ")}
-                    style={{ width: "150px", overflow: 'hidden' }}
+                    onChange={(e) =>
+                        handleChangeRole(e, contributor.Contributor_ID, id, "Админ")
+                    }
+                    style={{ width: "150px", overflow: "hidden" }}
                 >
-                    {contributor.role !== "В работе" && <option value="Требует подвтерждения">Требует подтверждения</option>}
+                    {contributor.role !== "В работе" && (
+                        <option value="Требует подтверждения">Требует подтверждения</option>
+                    )}
                     <option value="В работе">В работе</option>
-                    {contributor.role !== 'В работе' && <option value="Отклонен">Отклонен</option>}
-                    {contributor.role !== 'Завершен' && <option value="Завершен">Завершен</option>}
+                    {contributor.role !== "В работе" && (
+                        <option value="Отклонен">Отклонен</option>
+                    )}
+                    {contributor.role !== "Завершен" && (
+                        <option value="Завершен">Завершен</option>
+                    )}
                 </select>
             );
         }
@@ -241,37 +299,41 @@ export const EditorNavbar: React.FC<EditorNavbarProps> = ({ name, id, date, inpu
             return (
                 <select
                     value={contributor.role}
-                    onChange={(e) => handleChangeRole(e, contributor.Contributor_ID, id, "Модератор")}
+                    onChange={(e) =>
+                        handleChangeRole(e, contributor.Contributor_ID, id, "Модератор")
+                    }
                 >
                     <option value="В работе">В работе</option>
-                    {contributor.role !== 'В работе' && <option value="Отклонен">Отклонен</option>}
-                    {contributor.role !== 'В работе' && <option value="Завершен">Завершен</option>}
+                    {contributor.role !== "В работе" && (
+                        <option value="Отклонен">Отклонен</option>
+                    )}
+                    {contributor.role !== "В работе" && (
+                        <option value="Завершен">Завершен</option>
+                    )}
                 </select>
             );
         }
 
-        return null; // or render another default component if none of the conditions are met
-    }
-
+        return null;
+    };
 
     const handleSaveMarkdown = () => {
         const markdown: NotesTypes = {
             Markdown_ID: id,
             Content: input,
-            Name: name,
-            Status: '',
+            Name: mdName,
+            Status: "",
             User_ID: 0,
-            start_date: '',
-            PhotoURL: '',
+            start_date: "",
+            PhotoURL: "",
         };
 
         updateMarkdown(markdown);
+        setEditing(false);
     };
 
     return (
-        <div
-            style={editorStyles.navbar}
-        >
+        <div style={editorStyles.navbar}>
             <ModalWindow
                 header="Настройки доступа"
                 close="Закрыть"
@@ -280,44 +342,77 @@ export const EditorNavbar: React.FC<EditorNavbarProps> = ({ name, id, date, inpu
                 show={isShow}
             >
                 {contributors.map((contributor, idx) => (
-                    <Contributors
-                        id={contributor.Contributor_ID}
-                        key={idx}
-                    >
-                        <div style={{
-                            display: "flex",
-                            flexDirection: "row",
-                            justifyContent: "space-between",
-                            width: "100%"
-                        }}>
-                            <div style={{
+                    <Contributors id={contributor.Contributor_ID} key={idx}>
+                        <div
+                            style={{
                                 display: "flex",
                                 flexDirection: "row",
-                                alignItems: "center",
-                                justifyContent: "center"
-                            }}>
+                                justifyContent: "space-between",
+                                width: "100%",
+                            }}
+                        >
+                            <div
+                                style={{
+                                    display: "flex",
+                                    flexDirection: "row",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                }}
+                            >
                                 {myId === userID || myRole === 2 ? (
-                                    <Button variant='danger' className="btn btn-primary btn-sm" onClick={() => { handleDeleteRole(contributor.Contributor_ID, id) }}>Удалить</Button>
-                                ) : (null)
-                                }
-                                <p style={{ marginBottom: 0, marginLeft: 10 }}>{contributor.email}</p>
+                                    <Button
+                                        variant="danger"
+                                        className="btn btn-primary btn-sm"
+                                        onClick={() => {
+                                            handleDeleteRole(
+                                                contributor.Contributor_ID,
+                                                id
+                                            );
+                                        }}
+                                    >
+                                        Удалить
+                                    </Button>
+                                ) : null}
+                                {!isEditing ? (
+                                    <p style={{ marginBottom: 0, marginLeft: 10 }}>
+                                        {contributor.email}
+                                    </p>
+                                ) : (
+                                    <Form.Control
+                                        type="text"
+                                        value={mdName}
+                                        onChange={(e) => setMdName(e.target.value)}
+                                    />
+                                )}
                             </div>
-                            <SelectButton
-                                contributor={contributor}
-                            />
+                            <SelectButton contributor={contributor} />
                         </div>
                     </Contributors>
                 ))}
             </ModalWindow>
             <Breadcrumbs />
             <h4 style={{ margin: 0 }}>
-                {name} {formattedDate}
+                {!isEditing ? (
+                    <>
+                        {mdName} {formattedDate}
+                    </>
+                ) : (
+                    <Form.Control
+                        type="text"
+                        value={mdName}
+                        onChange={(e) => setMdName(e.target.value)}
+                    />
+                )}
             </h4>
             <ActionButton />
-            <Notification show={showNotification.show} message={showNotification.message} />
-            <Notification show={showContributorNotification.show} message={showContributorNotification.message} />
+            <Notification
+                show={showNotification.show}
+                message={showNotification.message}
+            />
+            <Notification
+                show={showContributorNotification.show}
+                message={showContributorNotification.message}
+            />
         </div>
     );
 };
-
-export default EditorNavbar;

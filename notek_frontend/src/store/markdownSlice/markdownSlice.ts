@@ -26,6 +26,9 @@ const markdownSlice = createSlice({
     name: "markdown",
     initialState: initialState,
     reducers: {
+        setUpdatedMarkdowns(state, action: PayloadAction<any[] | null>) {
+            state.markdowns = action.payload;
+        },
         setAllMarkdowns(state, action: PayloadAction<any | null>) {
             state.markdowns = action.payload.Markdowns;
             state.contributorID = action.payload.Contributor_id; 

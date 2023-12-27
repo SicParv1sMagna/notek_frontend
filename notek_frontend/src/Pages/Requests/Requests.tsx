@@ -55,6 +55,7 @@ export const Requests = () => {
                             photo={md.PhotoURL}
                             drafts={drafts}
                             setDrafts={setDrafts}
+                            allowedToDelete={true}
                         >
                             {md.Name}
                         </Draft>

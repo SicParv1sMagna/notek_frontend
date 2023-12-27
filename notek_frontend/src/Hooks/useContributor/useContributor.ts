@@ -66,16 +66,7 @@ export const useContributor = () => {
         )
             .then(response => {
                 const contributorsWithoutRoles = response.data;
-                contributorsWithoutRoles.forEach((contributor: Contributor) => {
-                    api.get(`/api/api/contributor/role/${id}/${contributor.Contributor_ID}`)
-                        .then(response => {
-                            contributor.role = response.data;
-                            console.log(response);
-                        })
-                        .catch(error => {
-                            console.error(error);
-                        })
-                })
+                
                 setContributors(contributorsWithoutRoles);
             })
             .catch(error => {

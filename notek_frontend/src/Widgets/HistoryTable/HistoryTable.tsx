@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
-import { Container, Form, InputGroup, Table } from 'react-bootstrap';
+import { Button, Container, Form, InputGroup, Table } from 'react-bootstrap';
 import { useContributor } from '../../Hooks/useContributor/useContributor';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectEndDateQuery, selectStartDateQuery, selectStatusQuery } from '../../store/contributorSlice/contributorSelector';
 import { contributorAction } from '../../store/contributorSlice/contributorSlice';
+import { useNavigate } from 'react-router-dom';
 
 export const HistoryTable = () => {
     const { getAllRequests } = useContributor();
@@ -12,6 +13,7 @@ export const HistoryTable = () => {
     const [endDate, setEndDate] = useState<string>("");
     const [status, setStatus] = useState<string>("");
 
+    const navigate = useNavigate();
     const dispatch = useDispatch();
 
     const selectedStartDate = useSelector(selectStartDateQuery);
@@ -114,21 +116,25 @@ export const HistoryTable = () => {
             <Table striped bordered hover>
                 <thead>
                     <tr>
+                        <th>№</th>
                         <th>Почта</th>
                         <th>Статус</th>
                         <th>Дата создания</th>
                         <th>Дата формирования</th>
                         <th>Дата завершения</th>
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody>
                     {requests.map((request) => (
                         <tr>
+                            <td>{request.Contributor_ID}</td>
                             <td>{request.email}</td>
                             <td>{request.status}</td>
                             <td>{formatDate(request.created_date)}</td>
                             <td>{formatDate(request.formed_date)}</td>
                             <td>{formatDate(request.completion_date)}</td>
+                            <td><Button variant='info' onClick={() => {navigate(`/notek_frontend/history/${request.Contributor_ID}`)}}>Подробнее</Button></td>
                         </tr>
                     ))
                     }

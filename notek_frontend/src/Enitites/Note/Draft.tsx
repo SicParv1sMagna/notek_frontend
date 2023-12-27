@@ -13,6 +13,7 @@ interface NoteProps {
     photo: string,
     drafts: any[],
     setDrafts: React.Dispatch<React.SetStateAction<any[]>>,
+    allowedToDelete: boolean;
 }
 
 export const Draft: React.FC<NoteProps> = (props) => {
@@ -70,12 +71,16 @@ export const Draft: React.FC<NoteProps> = (props) => {
                 </div>
             </div>
             <div>
+                {props.allowedToDelete ? (
                 <Button
                 variant="danger"
                 onClick={(e) => {handleDeleteDraft(e, props.id, props.drafts, props.setDrafts)}}
                 >
                     Удалить
                 </Button>
+                ) : (
+                    null
+                )}
             </div>
         </Container>
     )
