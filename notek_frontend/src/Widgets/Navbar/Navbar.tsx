@@ -86,19 +86,28 @@ export const Navbars = () => {
                         <Nav>
                             {window.location.pathname === "/notek_frontend/editor" ? (
                                 <Nav.Link>
-                                    {role !== 2 ? (
+                                    {role !== 0 ? (
+                                        <ButtonGroup>
+                                            <Button
+                                                disabled={contributorId === 0 || draftsLength === 0}
+                                                onClick={() => { navigate("/notek_frontend/requests") }}
+                                                style={{ marginRight: "15px" }}
+                                            >
+                                                Черновые запросы <Badge bg="warning">{draftsLength}</Badge>
+                                            </Button>
+                                            <Button
+                                                onClick={() => { navigate("/notek_frontend/history") }}
+                                            >
+                                                Таблица запросов
+                                            </Button>
+                                        </ButtonGroup>
+                                    ) : (
                                         <Button
                                             disabled={contributorId === 0 || draftsLength === 0}
                                             onClick={() => { navigate("/notek_frontend/requests") }}
-                                            style={{ marginRight: "15px" }}
+                                            style={{ marginRight: "15px"}}
                                         >
                                             Черновые запросы <Badge bg="warning">{draftsLength}</Badge>
-                                        </Button>
-                                    ) : (
-                                        <Button
-                                            onClick={() => { navigate("/notek_frontend/history") }}
-                                        >
-                                            Таблица запросов
                                         </Button>
                                     )}
                                 </Nav.Link>
@@ -223,7 +232,14 @@ export const EditorNavbar: React.FC<EditorNavbarProps> = ({
             );
         }
 
-        if (userID === myId || myRole === 1 || myRole === 2) {
+        const isAllowedContribution = contributors.filter((contributor) => {
+            return (
+                contributor.User_ID === myId &&
+                contributor.role !== "Требует подтверждения"
+            );
+        });
+
+        if (userID === myId) {
             return (
                 <ButtonGroup>
                     <Button
@@ -240,12 +256,32 @@ export const EditorNavbar: React.FC<EditorNavbarProps> = ({
             );
         }
 
-        const isAllowedContribution = contributors.filter((contributor) => {
-            return (
-                contributor.User_ID === myId &&
-                contributor.role !== "Требует подтверждения"
-            );
-        });
+        if (myRole === 1 || myRole === 2) {
+            if (isAllowedContribution.length !== 0) {
+                return (
+                    <ButtonGroup>
+                        <Button
+                            onClick={() => {
+                                handleAddMarkdownToContributor(id);
+                            }}
+                        >
+                            Запросить доступ
+                        </Button>
+                        <Button
+                            variant="danger"
+                            onClick={(e) => deleteMarkdown(id, e)}
+                        >
+                            Удалить
+                        </Button>
+                        {!isEditing && (
+                            <Button onClick={() => setEditing(true)}>Редактировать</Button>
+                        )}
+                        {isEditing && <Button onClick={handleSaveMarkdown}>Сохранить</Button>}
+                    </ButtonGroup>
+                )
+            }
+        }
+
         if (isAllowedContribution.length !== 0) {
             return (
                 <ButtonGroup>

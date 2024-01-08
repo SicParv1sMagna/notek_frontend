@@ -199,6 +199,7 @@ export const RequestsTable = () => {
                             <th>Дата создания</th>
                             <th>Дата формирования</th>
                             <th>Дата завершения</th>
+                            <th>Проверил</th>
                             <th></th>
                         </tr>
                     </thead>
@@ -230,6 +231,7 @@ export const RequestsTable = () => {
                                     <td>{formatDate(request.created_date) || ("")}</td>
                                     <td>{formatDate(request.formed_date) || ("")}</td>
                                     <td>{formatDate(request.completion_date) || ("")}</td>
+                                    <td>{request.approved_by || "Пусто"}</td>
                                     <td><Button variant="info" onClick={() => { navigate(`/notek_frontend/history/${request.Contributor_ID} `) }}>Подробнее</Button></td>
                                 </tr>
                             ))
