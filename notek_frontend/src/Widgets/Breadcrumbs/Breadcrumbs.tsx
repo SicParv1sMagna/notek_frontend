@@ -8,22 +8,27 @@ const Breadcrumbs = () => {
 
     useEffect(() => {
         // Update breadcrumbs whenever the location changes
-        const pathnames: any = location.pathname.split('/').filter((x) => x);
+        const pathnames = location.pathname.split('/').filter((x) => x);
         setBreadcrumbs(pathnames);
     }, [location]);
 
+    const translations = {
+        notek_frontend: 'На главную',
+        editor: 'список маркдаунов'
+        // Add more translations as needed
+    };
+
+    const translate = (key) => translations[key] || key;
+
     return (
         <Breadcrumb>
-            <Breadcrumb.Item linkAs={Link} linkProps={{ to: '/notek_frontend' }}>
-                Home
-            </Breadcrumb.Item>
             {breadcrumbs.map((breadcrumb, index) => (
                 <Breadcrumb.Item
                     key={breadcrumb}
                     linkAs={Link}
                     linkProps={{ to: `/${breadcrumbs.slice(0, index + 1).join('/')}` }}
                 >
-                    {breadcrumb}
+                    {translate(breadcrumb)}
                 </Breadcrumb.Item>
             ))}
         </Breadcrumb>

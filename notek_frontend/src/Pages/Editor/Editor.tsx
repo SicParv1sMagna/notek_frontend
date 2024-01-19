@@ -35,6 +35,10 @@ export const Editor = () => {
                 const filteredMarkdowns = NotesMock?.filter((md) =>
                     md.Name.toLowerCase().includes(search.toLowerCase())
                 );
+                if (search === "" || search === " ") {
+                    setMarkdowns(NotesMock);
+                    return;
+                }
                 setMarkdowns(filteredMarkdowns);
             }
         };
@@ -43,6 +47,8 @@ export const Editor = () => {
                 fetchNotes();
             }, 300);
             return () => clearTimeout(delaySearch);
+        } else {
+            setMarkdowns(NotesMock);
         }
 
         // Clear the timeout on component unmount or when search changes

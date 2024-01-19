@@ -10,7 +10,7 @@ export interface NotesTypes {
 export const NotesMock : NotesTypes[] = [
     {
         Markdown_ID: 1,
-        Name: "First Markdown",
+        Name: "Первый маркдаун",
         Content: "# Hello world",
         Status: "Активен",
         User_ID: 1,
@@ -18,7 +18,7 @@ export const NotesMock : NotesTypes[] = [
     },
     {
         Markdown_ID: 2,
-        Name: "Second Markdown",
+        Name: "Второй маркдаун",
         Content: "# Hello world 2",
         Status: "Активен",
         User_ID: 1,

@@ -9,14 +9,12 @@ interface SidebarProps {
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({ markdowns, setSearch }) => {
-
     const handleSearchMarkdowns = (e: React.ChangeEvent<HTMLInputElement>) => {
         setSearch(e.target.value);
     }
 
     return (
         <div style={styles.styles}>
-
             <Form.Control
                 type="text"
                 placeholder="Поиск"

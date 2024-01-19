@@ -58,7 +58,7 @@ HTML {
 body {
   overflow: hidden;
   height: 100%;
-  background-color: var(--color-dark-primary);
+  background-color: var(--color-light-primary);
   color: var(--color-dark-secondary);
 }
 

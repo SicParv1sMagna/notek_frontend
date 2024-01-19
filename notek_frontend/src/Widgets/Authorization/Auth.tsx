@@ -22,19 +22,18 @@ export const Login = () => {
                     width: "400px",
                     marginBottom: "20px",
                     alignItems: "center",
-
                 }}
             >
                 <Form.Group className="mb-3" controlId="formBasicEmail">
-                    <Form.Label>Email</Form.Label>
-                    <Form.Control type="email" placeholder="Enter email" />
+                    {/* <Form.Label>Почта</Form.Label> */}
+                    <Form.Control type="email" placeholder="example@example.com" />
                 </Form.Group>
                 <Form.Group className="mb-3" controlId="formBasicPassword">
-                    <Form.Label>Password</Form.Label>
-                    <Form.Control type="password" placeholder="Password" />
+                    {/* <Form.Label>Пароль</Form.Label> */}
+                    <Form.Control type="password" placeholder="Пароль" />
                 </Form.Group>
                 <Button variant="primary" onClick={handleButtonClick}>
-                    Submit
+                    Войти
                 </Button>
             </Form>
         </>

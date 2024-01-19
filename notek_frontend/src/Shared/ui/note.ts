@@ -5,16 +5,15 @@ export const noteStyle: Record<string, React.CSSProperties> = {
         display: "flex",
         flexDirection: "row",
         width: "100%",
-        height: "40px",
+        height: "100px",
         justifyContent: "space-between",
-        marginTop: "5px",
         alignItems: "center",
         padding: "10px",
         backgroundColor: "transparent",
-        borderRadius: "10px",
+        borderBottom: "1px solid black"
     },
     containerHover: {
-        backgroundColor: "var(--color-purple-400)",
+        backgroundColor: "var(--color-gray-300)",
         transition: "0.4s",
     },
 }

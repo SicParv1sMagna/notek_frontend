@@ -13,8 +13,9 @@ export const Preview : React.FC<PreviewProps> = ({ input }) => {
                 height: "90vh",
                 padding: "20px",
                 fontSize: "1.5rem",
-                backgroundColor: "#212529",
-                color: "whitesmoke"
+                backgroundColor: "white",
+                color: "black",
+                borderTop: "1px solid black",
             }}
         >
             <ReactMarkdown>{input}</ReactMarkdown>

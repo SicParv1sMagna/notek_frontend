@@ -13,6 +13,7 @@ export const MainPage = () => {
                     alignItems: "center",
                     justifyContent: "center",
                     minHeight: "100vh",
+                    color: "black"
                 }}
             >
                 <Login />

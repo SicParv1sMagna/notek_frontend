@@ -15,13 +15,8 @@ export const Navbars = () => {
                 <Navbar.Collapse id="responsive-navbar-nav">
                     <Nav className="me-auto">
                         <Nav.Link>
-                            <NavLink to="/notek_frontend/about">
-                                About
-                            </NavLink>
-                        </Nav.Link>
-                        <Nav.Link>
-                            <NavLink to="/notek_frontend/github">
-                                GitHub
+                            <NavLink to="/notek_frontend/editor">
+                                Список маркдаунов
                             </NavLink>
                         </Nav.Link>
                     </Nav>
@@ -33,7 +28,7 @@ export const Navbars = () => {
                         </Nav.Link>
                         <Nav.Link>
                             <NavLink to="/notek_frontend/registration">
-                                <Button>Зарегестрироваться</Button>
+                                <Button>Зарегистрироваться</Button>
                             </NavLink>
                         </Nav.Link>
 
@@ -82,14 +77,14 @@ export const EditorNavbar: React.FC<EditorNavbar> = ({ name, id, date }) => {
     return (
         <div
             style={{
-                backgroundColor: "#212529",
+                backgroundColor: "white",
                 height: "10vh",
                 display: "flex",
                 flexDirection: "row",
                 justifyContent: "space-between",
                 alignItems: "center",
                 padding: "10px",
-                color: "whitesmoke"
+                color: "black"
             }}
         >
             <Breadcrumbs />

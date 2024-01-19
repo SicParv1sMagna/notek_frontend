@@ -30,10 +30,10 @@ export const Note: React.FC<NoteProps> = (props) => {
             onMouseEnter={() => {setHovered(true)}}
             onMouseLeave={() => {setHovered(false)}}
         >
-            <div style={{display: "flex", flexDirection:"row"}}>
+            <div style={{display: "flex", flexDirection:"row", alignItems: "center"}}>
                 <img
                     style={{
-                        width: "25px",
+                        width: "30px",
                         height: "auto",
                     }}
                     src={props.photo ?
@@ -41,8 +41,8 @@ export const Note: React.FC<NoteProps> = (props) => {
                 <p
                     style={{
                         margin: 0,
-                        fontSize: "0.7em",
-                        color: "white"
+                        fontSize: "0.8em",
+                        color: "black"
                     }}
                 >{props.children}</p>
             </div>
