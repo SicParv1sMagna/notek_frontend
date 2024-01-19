@@ -5,7 +5,7 @@ import Breadcrumb from 'react-bootstrap/Breadcrumb';
 const translateBreadcrumb = (breadcrumb) => {
     // Ваш словарь сопоставления английских и русских названий
     const translationDict = {
-        notek_frontend: 'Notek',
+        notek_frontend: 'Главная',
         "edit-markdown": 'Редактор',
         "history": "Запросы на редактирование",
         "editor": "Редактор"

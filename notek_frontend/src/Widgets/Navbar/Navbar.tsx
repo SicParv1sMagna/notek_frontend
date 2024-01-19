@@ -261,6 +261,21 @@ export const EditorNavbar: React.FC<EditorNavbarProps> = ({
                 return (
                     <ButtonGroup>
                         <Button
+                            variant="danger"
+                            onClick={(e) => deleteMarkdown(id, e)}
+                        >
+                            Удалить
+                        </Button>
+                        {!isEditing && (
+                            <Button onClick={() => setEditing(true)}>Редактировать</Button>
+                        )}
+                        {isEditing && <Button onClick={handleSaveMarkdown}>Сохранить</Button>}
+                    </ButtonGroup>
+                )
+            } else {
+                return (
+                    <ButtonGroup>
+                        <Button
                             onClick={() => {
                                 handleAddMarkdownToContributor(id);
                             }}
