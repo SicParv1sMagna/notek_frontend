@@ -9,6 +9,7 @@ const Breadcrumbs = () => {
     useEffect(() => {
         // Update breadcrumbs whenever the location changes
         const pathnames = location.pathname.split('/').filter((x) => x);
+        // @ts-ignore
         setBreadcrumbs(pathnames);
     }, [location]);
 
@@ -17,7 +18,7 @@ const Breadcrumbs = () => {
         editor: 'список маркдаунов'
         // Add more translations as needed
     };
-
+    // @ts-ignore
     const translate = (key) => translations[key] || key;
 
     return (
